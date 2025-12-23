@@ -1,0 +1,32 @@
+# Aiversehack01 MVP Roadmap
+
+- [ ] **Phase 0: Foundation & Infrastructure** <!-- id: 0 -->
+    - [ ] Set up GitHub Repository & Project Structure <!-- id: 1 -->
+    - [ ] Configure PostgreSQL Database (Supabase or Local) <!-- id: 2 -->
+    - [ ] Set up n8n (Self-hosted or Cloud) <!-- id: 3 -->
+    - [ ] Define Database Schema (Users, Strategies, Actions, Feedback) <!-- id: 4 -->
+
+- [ ] **Phase 1: The Brain (Planner & Reasoning)** <!-- id: 5 -->
+    - [ ] Implement `Profile Intelligence Agent` (Resume parsing) <!-- id: 6 -->
+    - [ ] Implement `Planner Agent` (Strategy Generation Logic) <!-- id: 7 -->
+    - [ ] Define "Strategy" Object Structure (JSON Schema) <!-- id: 8 -->
+    - [ ] Create FastAPI Backend for Agents <!-- id: 9 -->
+
+- [ ] **Phase 2: The Hands (Execution via n8n)** <!-- id: 10 -->
+    - [ ] Workflow: Profile Data Ingestion <!-- id: 11 -->
+    - [ ] Workflow: Job/Hackathon Search (Market Reasoning) <!-- id: 12 -->
+    - [ ] Workflow: Application Action (Mock or Real) <!-- id: 13 -->
+
+- [ ] **Phase 3: The Loop (Reflection & Learning)** <!-- id: 14 -->
+    - [ ] Implement `Reflection Agent` (Analyze Rejections) <!-- id: 15 -->
+    - [ ] Workflow: Email/Status Monitoring for Rejections <!-- id: 16 -->
+    - [ ] Implement Feedback -> Insight Logic <!-- id: 17 -->
+
+- [ ] **Phase 4: The Face (UI)** <!-- id: 18 -->
+    - [ ] Setup Next.js Project <!-- id: 19 -->
+    - [ ] Build Dashboard (Timeline, Action Cards) <!-- id: 20 -->
+    - [ ] Integrate with FastAPI Backend <!-- id: 21 -->
+
+- [ ] **Phase 5: Integration & Demo** <!-- id: 22 -->
+    - [ ] End-to-End Test: Profile -> Plan -> Action -> Rejection -> Replan <!-- id: 23 -->
+    - [ ] "Proof of Intelligence" Demo Scenario <!-- id: 24 -->

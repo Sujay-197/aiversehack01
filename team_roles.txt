@@ -1,0 +1,62 @@
+# Aiversehack01 - Team Allocation & AI Prompts
+
+## Team Structure (3 Members)
+
+### Member 1: The Architect (Backend & Brain)
+**Focus:** Core Logic, State Management, API, Database.
+**Responsibilities:**
+- Design and implement the FastAPI backend.
+- Create the "Strategy" and "SkillProfile" data models (Pydantic).
+- Implement the "Planner Agent" logic (LLM prompting, context management).
+- Handle the "Reflection Loop" logic (comparing outcomes to predictions).
+- Manage the PostgreSQL database and schema.
+
+### Member 2: The Automator (Workflows & Integrations)
+**Focus:** Execution, Data Ingestion, External APIs.
+**Responsibilities:**
+- Build n8n workflows for Resume Parsing (PDF -> Text).
+- Create "Market Scout" workflows to scrape/fetch job listings.
+- Implement "Action Dispatcher" workflows (sending emails, applying).
+- Set up "Rejection Detector" workflows (monitoring Gmail).
+- Ensure reliable communication between n8n and the FastAPI Brain.
+
+### Member 3: The Product Engineer (Frontend & UX)
+**Focus:** User Interface, Experience, Visualization.
+**Responsibilities:**
+- Build the Next.js Dashboard.
+- Create the "Career Timeline" visualization.
+- Implement "Action Cards" for human-in-the-loop approvals.
+- Design the "Insight Dashboard" to show the AI's reasoning.
+- Connect the Frontend to the FastAPI backend.
+
+---
+
+## AI Workflow Prompts
+*Paste these prompts into your AI coding assistant (Cursor, Windsurf, etc.) to get instant context-aware help.*
+
+### Prompt for Member 1 (The Architect)
+```text
+You are an expert Backend & AI Architect working on "Aiversehack01", an Agentic AI system for career planning.
+**Project Context:** We are building a "Brain" (FastAPI) that plans career strategies and "Hands" (n8n) that execute them. The core innovation is a closed feedback loop where rejections trigger replanning.
+**My Role:** I am responsible for the "Brain". I need to build the FastAPI backend, define the Pydantic models for "Strategy" and "Profile", and implement the LLM logic for planning and reflection.
+**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Design the Strategy Pydantic model"]
+**Constraint:** Keep the logic pure and testable. The Brain should be stateless where possible, relying on the DB. Focus on the reasoning logic, not the execution details.
+```
+
+### Prompt for Member 2 (The Automator)
+```text
+You are an expert Automation Engineer working on "Aiversehack01", an Agentic AI system for career planning.
+**Project Context:** We are building a "Brain" (FastAPI) that plans career strategies and "Hands" (n8n) that execute them.
+**My Role:** I am responsible for the "Hands" (n8n workflows). I need to build robust workflows that ingest data (resumes, jobs) and execute actions (emails, applications) instructed by the Brain.
+**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Create a workflow to parse PDF resumes"]
+**Constraint:** Use n8n best practices. Ensure error handling is robust. We are the "doers", not the "thinkers". We call the Brain API to get instructions.
+```
+
+### Prompt for Member 3 (The Product Engineer)
+```text
+You are an expert Frontend Engineer working on "Aiversehack01", an Agentic AI system for career planning.
+**Project Context:** We are building a system where an AI plans and executes career moves. The user needs to trust the AI.
+**My Role:** I am responsible for the "Face" (Next.js Dashboard). I need to build a UI that visualizes the AI's "Strategy", allows users to approve/reject actions, and shows the "Learning Loop" (why a strategy changed).
+**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Design the Timeline component"]
+**Constraint:** The UI must be "High Signal". Use Tailwind CSS. Focus on visualizing time and causality (Action -> Rejection -> Insight -> New Strategy).
+```

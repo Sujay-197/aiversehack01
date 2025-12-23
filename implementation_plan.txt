@@ -1,0 +1,83 @@
+# Aiversehack01 Implementation Plan & Chain of Thought
+
+## Goal Description
+Build an Agentic AI system that helps students convert skills into opportunities (internships, hackathons) by continuously planning, executing, and **learning from rejections**. The core differentiator is the "closed feedback loop" where the system replans based on failure, rather than just retrying blindly.
+
+## Chain of Thought: Implementation Approaches
+
+### Option 1: The "Low-Code Orchestrator" (n8n Heavy)
+*   **Concept:** Use n8n for almost everything. Logic is embedded in n8n "Code" nodes or "AI Agent" nodes.
+*   **Pros:** Rapid prototyping, visual debugging of flows, easy integrations (Gmail, Sheets, etc.).
+*   **Cons:** Complex reasoning (the "Brain") becomes hard to manage in a flowchart. "State" (Strategy versions) is difficult to version control and diff within n8n.
+*   **Verdict:** Good for the "Hands" (Execution), bad for the "Brain".
+
+### Option 2: The "Code-First Monolith" (LangGraph/LangChain)
+*   **Concept:** A Python application using LangGraph to manage state and agent transitions.
+*   **Pros:** Ultimate control over the "Brain", memory, and state transitions. Best for implementing the "Strategy Diff" and "Reflection" logic.
+*   **Cons:** Re-implementing integrations (Gmail API, LinkedIn scraping) is tedious and brittle compared to n8n.
+*   **Verdict:** Good for the "Brain", tedious for the "Hands".
+
+### Option 3: The "Hybrid Cortex" (Recommended)
+*   **Concept:** 
+    *   **Brain (Python/FastAPI):** Handles state, strategy generation, reflection, and decision making. Exposes API endpoints like `/generate-plan`, `/reflect-on-failure`.
+    *   **Hands (n8n):** Handles dirty work. Polls emails, scrapes sites, submits forms. Calls the Brain API to get instructions or report results.
+    *   **Memory (PostgreSQL):** Shared source of truth.
+*   **Why:** Leverages n8n's strength in connectivity and Python's strength in complex logic/data structures. Aligns perfectly with the provided `initplan.txt` architecture.
+
+---
+
+## Ground 0 to MVP Roadmap
+
+### Phase 0: The Foundation (Infrastructure)
+*   **Objective:** Set up the environment where the Brain and Hands will live.
+*   **Tech:** GitHub, Docker (optional), PostgreSQL, n8n.
+*   **Steps:**
+    1.  **Repo Setup:** Monorepo structure (`/backend`, `/frontend`, `/workflows`).
+    2.  **Database:** Spin up PostgreSQL. Create schemas for `User`, `SkillProfile`, `Strategy` (JSONB), `Action`, `Outcome`.
+    3.  **n8n:** Get a local or cloud instance running. Connect it to the Postgres DB.
+
+### Phase 1: The Brain (Reasoning Core)
+*   **Objective:** Build the API that can "think" about a user's career.
+*   **Tech:** Python, FastAPI, LLM (Gemini/OpenAI), Pydantic.
+*   **Steps:**
+    1.  **Data Models:** Define `Strategy` as a Pydantic model. It needs to be versioned.
+    2.  **Profile Agent:** Endpoint that takes raw text (Resume) -> Structured `SkillProfile`.
+    3.  **Planner Agent:** Endpoint that takes `SkillProfile` + `MarketData` -> `Strategy` (List of recommended actions).
+    4.  **Strategy Diffing:** Logic to compare Strategy V1 vs V2.
+
+### Phase 2: The Hands (Execution Layer)
+*   **Objective:** Make the system actually *do* things in the real world.
+*   **Tech:** n8n.
+*   **Steps:**
+    1.  **Ingestion Workflow:** Watch a Google Drive folder for Resume PDF -> Extract Text -> Call Brain API (`/profile`).
+    2.  **Market Scout Workflow:** Scrape/Fetch RSS feeds for Hackathons/Internships -> Store in DB.
+    3.  **Action Dispatcher:** Cron workflow that checks active Strategy -> Triggers actions (e.g., "Draft Email").
+
+### Phase 3: The Loop (Reflection & Learning)
+*   **Objective:** The "Innovation Hook". Handling failure.
+*   **Tech:** Python (Logic), n8n (Trigger).
+*   **Steps:**
+    1.  **Rejection Detector:** n8n workflow monitoring Gmail for keywords ("unfortunately", "pursue other candidates").
+    2.  **Reflection Agent:** API endpoint `/reflect`. Input: Rejection Email + Context. Output: `Insight` (e.g., "Resume lacks React projects").
+    3.  **Replanning:** Trigger the Planner Agent to generate Strategy V(N+1) taking the new `Insight` into account.
+
+### Phase 4: The Face (User Interface)
+*   **Objective:** Show the user what the AI is doing for them.
+*   **Tech:** Next.js, Tailwind CSS.
+*   **Steps:**
+    1.  **Timeline View:** Visual history of Strategies and Actions.
+    2.  **Action Cards:** "Approve/Reject" UI for human-in-the-loop steps (e.g., "AI wants to send this email, approve?").
+    3.  **Insight Dashboard:** Show *why* the strategy changed (The "Proof of Intelligence").
+
+## MVP Success Criteria (The "AI Proof Moment")
+1.  **User:** Uploads Resume (Python dev).
+2.  **System:** Plans to apply for "Python Internships".
+3.  **Event:** User gets rejected (simulated or real).
+4.  **System (Reflection):** Realizes "Market demands Cloud skills".
+5.  **System (Replan):** Updates Strategy to "Build AWS Project" BEFORE applying to more jobs.
+6.  **User:** Sees this shift in the Dashboard.
+
+## Next Immediate Steps
+1.  Initialize the project repository.
+2.  Draft the `Strategy` JSON schema (The core data structure).
+3.  Set up the FastAPI skeleton.
