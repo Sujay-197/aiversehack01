@@ -1,9 +1,15 @@
 # Aiversehack01 Implementation Plan & Chain of Thought
 
 ## Goal Description
-Build an Agentic AI system that helps students convert skills into opportunities (internships, hackathons) by continuously planning, executing, and **learning from rejections**. The core differentiator is the "closed feedback loop" where the system replans based on failure, rather than just retrying blindly.
+Build an Agentic AI system that functions as a **Belief Testing Engine** for career development. Instead of simply "recommending" jobs, it creates a **"Failure Passport"**—a set of assumptions about the user's fit for the market—and generates **experiments** (applications, projects) to test and refine those assumptions. The goal is to move from "Unknown" to "Confident" through a closed feedback loop of failure and reflection.
 
-## Chain of Thought: Implementation Approaches
+## Chain of Thought: Philosophical Shift
+*   **Old View:** User has skills -> AI finds matching jobs -> AI applies -> Success/Fail.
+*   **New View (The "Scientist"):** 
+    *   **State:** A set of *Beliefs* (e.g., "User is fit for Backend at Series A startups") with *Confidence Scores*.
+    *   **Action:** An *Experiment* designed to test a specific Belief (e.g., "Apply to 5 Series A startups to test market response").
+    *   **Outcome:** Failure is not just "bad news", it's *Data* that updates the Belief State.
+
 
 ### Option 1: The "Low-Code Orchestrator" (n8n Heavy)
 *   **Concept:** Use n8n for almost everything. Logic is embedded in n8n "Code" nodes or "AI Agent" nodes.
@@ -30,52 +36,52 @@ Build an Agentic AI system that helps students convert skills into opportunities
 
 ### Phase 0: The Foundation (Infrastructure)
 *   **Objective:** Set up the environment where the Brain and Hands will live.
-*   **Tech:** GitHub, Docker (optional), PostgreSQL, n8n.
+*   **Tech:** GitHub, PostgreSQL, n8n.
 *   **Steps:**
-    1.  **Repo Setup:** Monorepo structure (`/backend`, `/frontend`, `/workflows`).
-    2.  **Database:** Spin up PostgreSQL. Create schemas for `User`, `SkillProfile`, `Strategy` (JSONB), `Action`, `Outcome`.
-    3.  **n8n:** Get a local or cloud instance running. Connect it to the Postgres DB.
+    1.  **Repo Setup:** Monorepo structure.
+    2.  **Database:** Schemas for `User`, `Evidence` (Raw Data), `BeliefState` (The Passport), `Experiment` (Actions), `Outcome`.
+    3.  **n8n:** Connect to DB.
 
-### Phase 1: The Brain (Reasoning Core)
-*   **Objective:** Build the API that can "think" about a user's career.
-*   **Tech:** Python, FastAPI, LLM (Gemini/OpenAI), Pydantic.
+### Phase 1: Identity Capture & The Failure Passport (The Brain v1)
+*   **Objective:** Build the "Passport v0" creation logic. **NO RATING, ONLY CAPTURING.**
+*   **Tech:** Python, FastAPI, Pydantic.
 *   **Steps:**
-    1.  **Data Models:** Define `Strategy` as a Pydantic model. It needs to be versioned.
-    2.  **Profile Agent:** Endpoint that takes raw text (Resume) -> Structured `SkillProfile`.
-    3.  **Planner Agent:** Endpoint that takes `SkillProfile` + `MarketData` -> `Strategy` (List of recommended actions).
-    4.  **Strategy Diffing:** Logic to compare Strategy V1 vs V2.
+    1.  **Evidence Collection:** Endpoint to take Resume/GitHub -> Store as "Claimed Skills" & "Demonstrated Skills".
+    2.  **Passport Generation:** Logic to synthesize Evidence into *Assumptions* (e.g., "Assumption: User knows Python"). Assign initial *Confidence Scores*.
+    3.  **Gap Analysis:** Identify "Known Unknowns" (e.g., "We don't know if the user can pass a LeetCode medium").
 
-### Phase 2: The Hands (Execution Layer)
-*   **Objective:** Make the system actually *do* things in the real world.
+### Phase 2: Hypothesis Engine (Reasoning Core)
+*   **Objective:** The engine that says "Here is how we test your assumptions."
+*   **Modes:**
+    *   **Mode A (Hypothesis-Guided):** "Confidence in 'Frontend Skills' is low. Suggestion: Build a React App to increase confidence."
+    *   **Mode B (User-Driven):** User: "I want a Google job." System: "Okay, existing belief state says you are 40% confident for Big Tech. Here is the gap."
+*   **Steps:**
+    1.  **planner_agent:** Takes `Passport` -> Generates `Experiments` (Batch of actions).
+    2.  **Opportunity Surfacer:** **NOT a recommender.** Finds hackathons/jobs that *best test the current hypothesis*.
+
+### Phase 3: The Hands (Execution & Experiments)
+*   **Objective:** Run the experiments.
 *   **Tech:** n8n.
 *   **Steps:**
-    1.  **Ingestion Workflow:** Watch a Google Drive folder for Resume PDF -> Extract Text -> Call Brain API (`/profile`).
-    2.  **Market Scout Workflow:** Scrape/Fetch RSS feeds for Hackathons/Internships -> Store in DB.
-    3.  **Action Dispatcher:** Cron workflow that checks active Strategy -> Triggers actions (e.g., "Draft Email").
+    1.  **Experiment Runner:** Submit applications, track submissions.
+    2.  **Outcome Monitor:** Watch for "Rejection", "Ghosting", "Invite".
+    3.  **Feedback Loop:** Feed outcomes back to the Belief Engine to update Confidence Scores.
 
-### Phase 3: The Loop (Reflection & Learning)
-*   **Objective:** The "Innovation Hook". Handling failure.
-*   **Tech:** Python (Logic), n8n (Trigger).
+### Phase 4: The Face (UI as a Lab Notebook)
+*   **Objective:** Visualize the "Science" of the career.
+*   **Tech:** Next.js.
 *   **Steps:**
-    1.  **Rejection Detector:** n8n workflow monitoring Gmail for keywords ("unfortunately", "pursue other candidates").
-    2.  **Reflection Agent:** API endpoint `/reflect`. Input: Rejection Email + Context. Output: `Insight` (e.g., "Resume lacks React projects").
-    3.  **Replanning:** Trigger the Planner Agent to generate Strategy V(N+1) taking the new `Insight` into account.
-
-### Phase 4: The Face (User Interface)
-*   **Objective:** Show the user what the AI is doing for them.
-*   **Tech:** Next.js, Tailwind CSS.
-*   **Steps:**
-    1.  **Timeline View:** Visual history of Strategies and Actions.
-    2.  **Action Cards:** "Approve/Reject" UI for human-in-the-loop steps (e.g., "AI wants to send this email, approve?").
-    3.  **Insight Dashboard:** Show *why* the strategy changed (The "Proof of Intelligence").
+    1.  **Passport View:** Visualization of the User's Belief State (Skills + Confidence bars).
+    2.  **Experiment Dashboard:** Active tests, incoming results.
+    3.  **Insight Log:** "We learned that you are not getting passing checks on Resume Screenings (Confidence in 'Resume Quality' dropped)."
 
 ## MVP Success Criteria (The "AI Proof Moment")
-1.  **User:** Uploads Resume (Python dev).
-2.  **System:** Plans to apply for "Python Internships".
-3.  **Event:** User gets rejected (simulated or real).
-4.  **System (Reflection):** Realizes "Market demands Cloud skills".
-5.  **System (Replan):** Updates Strategy to "Build AWS Project" BEFORE applying to more jobs.
-6.  **User:** Sees this shift in the Dashboard.
+1.  **Onboarding:** User uploads Resume. System builds **Passport v0** (e.g., "Belief: Good at Python", Confidence: 0.5).
+2.  **Hypothesis:** System suggests: "Apply to 5 Python Internships to test this belief."
+3.  **Experiment:** User approves. n8n applies.
+4.  **Outcome:** 5 Rejections.
+5.  **Learning:** System updates Passport: "Belief: Good at Python" -> Confidence: 0.2. "New Assumption: Resume keyword mismatch".
+6.  **Next Step:** System proposes **Mode A**: "Rewrite Resume with these keywords" (to increase confidence).
 
 ## Next Immediate Steps
 1.  Initialize the project repository.

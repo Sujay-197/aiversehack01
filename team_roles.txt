@@ -3,31 +3,29 @@
 ## Team Structure (3 Members)
 
 ### Member 1: The Architect (Backend & Brain)
-**Focus:** Core Logic, State Management, API, Database.
+**Focus:** Core Logic, Belief State, API, Database.
 **Responsibilities:**
-- Design and implement the FastAPI backend.
-- Create the "Strategy" and "SkillProfile" data models (Pydantic).
-- Implement the "Planner Agent" logic (LLM prompting, context management).
-- Handle the "Reflection Loop" logic (comparing outcomes to predictions).
-- Manage the PostgreSQL database and schema.
+- Design the "Belief State" (Passport) schema (Assumptions + Confidence Scores).
+- Implement the "Passport Generator" (Evidence -> Assumptions). **Crucial: Do not rank/rate users, only map evidence.**
+- Build the "Hypothesis Engine" (Mode A & Mode B logic).
+- Implement the "Belief Updater" (Logic that adjusts confidence based on outcomes).
+- Manage the PostgreSQL database.
 
-### Member 2: The Automator (Workflows & Integrations)
+### Member 2: The Automator (Workflows & Experiments)
 **Focus:** Execution, Data Ingestion, External APIs.
 **Responsibilities:**
-- Build n8n workflows for Resume Parsing (PDF -> Text).
-- Create "Market Scout" workflows to scrape/fetch job listings.
-- Implement "Action Dispatcher" workflows (sending emails, applying).
-- Set up "Rejection Detector" workflows (monitoring Gmail).
-- Ensure reliable communication between n8n and the FastAPI Brain.
+- Build n8n workflows for "Evidence Collection" (Resume/GitHub/LinkedIn).
+- Create "Experiment Runners" (Workflows that execute the hypothesis, e.g., apply to 5 jobs).
+- Implement "Outcome Monitors" (Detecting Rejection/Ghosting).
+- Ensure workflows feed "Outcomes" back to the Brain as data points, not just statuses.
 
 ### Member 3: The Product Engineer (Frontend & UX)
 **Focus:** User Interface, Experience, Visualization.
 **Responsibilities:**
-- Build the Next.js Dashboard.
-- Create the "Career Timeline" visualization.
-- Implement "Action Cards" for human-in-the-loop approvals.
-- Design the "Insight Dashboard" to show the AI's reasoning.
-- Connect the Frontend to the FastAPI backend.
+- Build the "Lab Notebook" UI (Next.js).
+- Visualize the "Failure Passport" (Show skills with confidence intervals, not just progress bars).
+- Create the "Hypothesis vs Outcome" dashboard.
+- Ensure the user understands that *Failure = Data*, effectively gamifying the rejection process.
 
 ---
 
@@ -36,27 +34,35 @@
 
 ### Prompt for Member 1 (The Architect)
 ```text
-You are an expert Backend & AI Architect working on "Aiversehack01", an Agentic AI system for career planning.
-**Project Context:** We are building a "Brain" (FastAPI) that plans career strategies and "Hands" (n8n) that execute them. The core innovation is a closed feedback loop where rejections trigger replanning.
-**My Role:** I am responsible for the "Brain". I need to build the FastAPI backend, define the Pydantic models for "Strategy" and "Profile", and implement the LLM logic for planning and reflection.
-**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Design the Strategy Pydantic model"]
-**Constraint:** Keep the logic pure and testable. The Brain should be stateless where possible, relying on the DB. Focus on the reasoning logic, not the execution details.
+You are an expert Backend & AI Architect working on "Aiversehack01", a Belief Testing System for careers.
+**Project Philosophy:** We are NOT building a "Job Recommender". We are building a "Scientist". We capture a user's "Belief State" (Assumptions with Confidence Scores) and run "Experiments" (Applications) to test them.
+**My Role:** I am responsible for the "Brain" (FastAPI). I need to design the "Failure Passport" and the logic for updating beliefs based on failure.
+**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Design the BeliefState Pydantic model"]
+**Constraint:** 
+1. The system never "rates" the user. It only builds a "Passport" of what is known/unknown.
+2. "Opportunities" are only fetched if they test a specific hypothesis.
+3. Focus on the "Learning Loop": Failure -> Confidence Update.
 ```
 
 ### Prompt for Member 2 (The Automator)
 ```text
-You are an expert Automation Engineer working on "Aiversehack01", an Agentic AI system for career planning.
-**Project Context:** We are building a "Brain" (FastAPI) that plans career strategies and "Hands" (n8n) that execute them.
-**My Role:** I am responsible for the "Hands" (n8n workflows). I need to build robust workflows that ingest data (resumes, jobs) and execute actions (emails, applications) instructed by the Brain.
-**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Create a workflow to parse PDF resumes"]
-**Constraint:** Use n8n best practices. Ensure error handling is robust. We are the "doers", not the "thinkers". We call the Brain API to get instructions.
+You are an expert Automation Engineer working on "Aiversehack01", a Belief Testing System for careers.
+**Project Philosophy:** We are building a "Scientist". My workflows are the "Hands" that conduct experiments.
+**My Role:** I am responsible for n8n workflows. I need to ingest "Evidence" (Resumes) without judging it, and run "Experiments" (Applications) that return precise "Outcomes" (Rejection/Ghosting/Invite).
+**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Create the Outcome Monitor workflow"]
+**Constraint:** 
+1. Treat every application as an "Experiment".
+2. The output of an action must be structured data (The Outcome) that the Brain can use to update confidence.
 ```
 
 ### Prompt for Member 3 (The Product Engineer)
 ```text
-You are an expert Frontend Engineer working on "Aiversehack01", an Agentic AI system for career planning.
-**Project Context:** We are building a system where an AI plans and executes career moves. The user needs to trust the AI.
-**My Role:** I am responsible for the "Face" (Next.js Dashboard). I need to build a UI that visualizes the AI's "Strategy", allows users to approve/reject actions, and shows the "Learning Loop" (why a strategy changed).
-**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Design the Timeline component"]
-**Constraint:** The UI must be "High Signal". Use Tailwind CSS. Focus on visualizing time and causality (Action -> Rejection -> Insight -> New Strategy).
+You are an expert Frontend Engineer working on "Aiversehack01", a Belief Testing System for careers.
+**Project Philosophy:** We are building a "Scientist". The UI should feel like a "Lab Notebook", not a job board.
+**My Role:** I am responsible for the Next.js Dashboard. I need to visualize the "Failure Passport" (Beliefs + Confidence) and show how "Experiments" (Actions) are changing those confidence scores.
+**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Design the Passport View"]
+**Constraint:** 
+1. Do not use generic "Progress Bars". Use "Confidence Intervals" or "Fog of War" visualizations.
+2. Frame "Job Listings" as "Opportunities to Test Hypothesis X", not "Recommended Jobs".
+3. Emphasize that Failure is valuable data.
 ```
