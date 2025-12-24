@@ -7,10 +7,12 @@
     - [x] Define Database Schema (Users, Evidence, BeliefState, Experiments, Outcomes) <!-- id: 4 -->
 
 - [ ] **Phase 1: Identity & The Failure Passport** <!-- id: 5 -->
-    - [ ] Implement `Evidence Collection` (Raw Resume/GitHub ingestion) <!-- id: 6 -->
-    - [ ] Design `Belief State` Schema (Assumptions + Confidence Scores) <!-- id: 7 -->
-    - [ ] Implement `Passport Generator` (Evidence -> Initial Beliefs) <!-- id: 8 -->
-    - [ ] **Constraint Check:** Ensure NO "Rating" happens here, only "Mapping". <!-- id: 9 -->
+    - [ ] Define **Pydantic Evidence Models** (Resume, GitHub, LinkedIn schemas) <!-- id: 6 -->
+    - [ ] Implement `Resume Agent` (LangChain + PydanticOutputParser) <!-- id: 7 -->
+    - [ ] Implement `GitHub Agent` (LangChain chain for tech verification) <!-- id: 8 -->
+    - [ ] Implement `LinkedIn Agent` (LangChain chain for profile context) <!-- id: 9 -->
+    - [ ] Implement `Planning Agent` (LangChain accumulator -> Passport v0) <!-- id: 10 -->
+    - [ ] **Constraint Check:** Ensure NO "Rating" happens here, only "Mapping". <!-- id: 11 -->
 
 - [ ] **Phase 2: The Hypothesis Engine** <!-- id: 10 -->
     - [ ] Implement `Mode A` Logic (Hypothesis-Guided: "Test Weakest Belief") <!-- id: 11 -->

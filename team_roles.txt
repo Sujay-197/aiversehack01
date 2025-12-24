@@ -2,22 +2,24 @@
 
 ## Team Structure (3 Members)
 
-### Member 1: The Architect (Backend & Brain)
-**Focus:** Core Logic, Belief State, API, Database.
+### Member 1 (Person 0): The Evidence Specialist
+**Focus:** Ingestion Agents, Data Extraction, Parsing, **LangChain**.
 **Responsibilities:**
-- Design the "Belief State" (Passport) schema (Assumptions + Confidence Scores).
-- Implement the "Passport Generator" (Evidence -> Assumptions). **Crucial: Do not rank/rate users, only map evidence.**
+- Create 3 specialized agents using **LangChain & Pydantic**: 
+    1. **Resume Parsing Agent** (Uses `PydanticOutputParser` to extract skills).
+    2. **GitHub Parsing Agent** (Analytic chains for repo verification).
+    3. **LinkedIn Parsing Agent** (Structured extraction of professional profile).
+- Provide raw "Evidence Objects" (Pydantic models) to the Planning Agent.
+- Ensure high-fidelity extraction without bias or rating.
+
+### Member 2: The Strategic Brain
+**Focus:** Planning Agent, State Accumulation, Feedback Loops, **LangChain/LangGraph**.
+**Responsibilities:**
+- Implement the **Planning Agent** that accumulates Pydantic results from the 3 Evidence Agents.
+- Design the transition to **Phase 1** (Passport v0 generation) using LangChain reasoning chains.
 - Build the "Hypothesis Engine" (Mode A & Mode B logic).
 - Implement the "Belief Updater" (Logic that adjusts confidence based on outcomes).
-- Manage the PostgreSQL database.
-
-### Member 2: The Automator (Workflows & Experiments)
-**Focus:** Execution, Data Ingestion, External APIs.
-**Responsibilities:**
-- Build n8n workflows for "Evidence Collection" (Resume/GitHub/LinkedIn).
-- Create "Experiment Runners" (Workflows that execute the hypothesis, e.g., apply to 5 jobs).
-- Implement "Outcome Monitors" (Detecting Rejection/Ghosting).
-- Ensure workflows feed "Outcomes" back to the Brain as data points, not just statuses.
+- Manage the PostgreSQL database (State & History).
 
 ### Member 3: The Product Engineer (Frontend & UX)
 **Focus:** User Interface, Experience, Visualization.
@@ -32,27 +34,29 @@
 ## AI Workflow Prompts
 *Paste these prompts into your AI coding assistant (Cursor, Windsurf, etc.) to get instant context-aware help.*
 
-### Prompt for Member 1 (The Architect)
+### Prompt for Member 1 (Person 0 - Evidence Specialist)
 ```text
-You are an expert Backend & AI Architect working on "Aiversehack01", a Belief Testing System for careers.
-**Project Philosophy:** We are NOT building a "Job Recommender". We are building a "Scientist". We capture a user's "Belief State" (Assumptions with Confidence Scores) and run "Experiments" (Applications) to test them.
-**My Role:** I am responsible for the "Brain" (FastAPI). I need to design the "Failure Passport" and the logic for updating beliefs based on failure.
-**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Design the BeliefState Pydantic model"]
-**Constraint:** 
-1. The system never "rates" the user. It only builds a "Passport" of what is known/unknown.
-2. "Opportunities" are only fetched if they test a specific hypothesis.
-3. Focus on the "Learning Loop": Failure -> Confidence Update.
+You are an expert Backend & Parsing Specialist working on "Aiversehack01". 
+**Project Philosophy:** We are building a "Scientist". My job is to gather evidence via 3 specialized agents.
+**My Role:** I am responsible for creating:
+1. A **Resume Parsing Agent** using LangChain & Pydantic.
+2. A **GitHub Parsing Agent** using LangChain & Pydantic.
+3. A **LinkedIn Parsing Agent** using LangChain & Pydantic.
+My goal is to provide structured Pydantic Evidence Objects to the Planning Agent.
+**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Implement the GitHub Agent with LangChain"]
+**Constraint:** Use Pydantic schemas for all outputs. Do not rate the user. Only extract evidence.
 ```
 
-### Prompt for Member 2 (The Automator)
+### Prompt for Member 2 (The Strategic Brain)
 ```text
-You are an expert Automation Engineer working on "Aiversehack01", a Belief Testing System for careers.
-**Project Philosophy:** We are building a "Scientist". My workflows are the "Hands" that conduct experiments.
-**My Role:** I am responsible for n8n workflows. I need to ingest "Evidence" (Resumes) without judging it, and run "Experiments" (Applications) that return precise "Outcomes" (Rejection/Ghosting/Invite).
-**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Create the Outcome Monitor workflow"]
+You are an expert AI Strategist working on "Aiversehack01".
+**Project Philosophy:** We are building a "Scientist". I am the core thinking brain.
+**My Role:** I am responsible for the **Planning Agent**. I accumulate evidence (Pydantic objects) from the 3 Ingestion Agents and generate the "Failure Passport v0" using LangChain/LangGraph logic. I also manage the "Hypothesis Engine" and "Belief Updater".
+**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Build the Planning Agent accumulator chain"]
 **Constraint:** 
-1. Treat every application as an "Experiment".
-2. The output of an action must be structured data (The Outcome) that the Brain can use to update confidence.
+1. The Planning Agent must wait for all 3 ingestion results before finalizing the Passport.
+2. Use LangChain for all complex reasoning and decision-making logic.
+3. Focus on the "Learning Loop": Failure -> Confidence Update.
 ```
 
 ### Prompt for Member 3 (The Product Engineer)

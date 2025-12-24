@@ -44,11 +44,15 @@ Build an Agentic AI system that functions as a **Belief Testing Engine** for car
 
 ### Phase 1: Identity Capture & The Failure Passport (The Brain v1)
 *   **Objective:** Build the "Passport v0" creation logic. **NO RATING, ONLY CAPTURING.**
-*   **Tech:** Python, FastAPI, Pydantic.
+*   **Tech:** Python, FastAPI, Pydantic, **LangChain (LCEL)**, Agentic Parsing.
 *   **Steps:**
-    1.  **Evidence Collection:** Endpoint to take Resume/GitHub -> Store as "Claimed Skills" & "Demonstrated Skills".
-    2.  **Passport Generation:** Logic to synthesize Evidence into *Assumptions* (e.g., "Assumption: User knows Python"). Assign initial *Confidence Scores*.
-    3.  **Gap Analysis:** Identify "Known Unknowns" (e.g., "We don't know if the user can pass a LeetCode medium").
+    1.  **Specialized Evidence Agents (LangChain based):**
+        *   **Resume Agent:** Uses LangChain PydanticOutputParser to extract structured claimed skills.
+        *   **GitHub Agent:** Analyzes repositories and outputs verified technical profile via LangChain.
+        *   **LinkedIn Agent:** Fetches and structures professional context.
+    2.  **Planning Agent (Accumulator):** Orchestrates the 3 agents above using LangChain to synthesize a coherent profile.
+    3.  **Passport Generation:** Logic to synthesize the accumulated Evidence into *Assumptions* (e.g., "Assumption: User knows Python"). Assign initial *Confidence Scores*.
+    4.  **Gap Analysis:** Identify "Known Unknowns".
 
 ### Phase 2: Hypothesis Engine (Reasoning Core)
 *   **Objective:** The engine that says "Here is how we test your assumptions."
