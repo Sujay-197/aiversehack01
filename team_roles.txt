@@ -3,22 +3,22 @@
 ## Team Structure (3 Members)
 
 ### Member 1 (Person 0): The Evidence Specialist
-**Focus:** Ingestion Agents, Data Extraction, Parsing, **LangChain**.
+**Focus:** Ingestion Agents, Data Extraction, Parsing, **LangChain & LangGraph**.
 **Responsibilities:**
-- Create 3 specialized agents using **LangChain & Pydantic**: 
+- Create 3 specialized agents as **LangGraph Nodes**: 
     1. **Resume Parsing Agent** (Uses `PydanticOutputParser` to extract skills).
     2. **GitHub Parsing Agent** (Analytic chains for repo verification).
     3. **LinkedIn Parsing Agent** (Structured extraction of professional profile).
-- Provide raw "Evidence Objects" (Pydantic models) to the Planning Agent.
+- Design the **State Schema** for the Evidence Graph.
 - Ensure high-fidelity extraction without bias or rating.
 
 ### Member 2: The Strategic Brain
-**Focus:** Planning Agent, State Accumulation, Feedback Loops, **LangChain/LangGraph**.
+**Focus:** Planning Agent, State Accumulation, Feedback Loops, **LangGraph**.
 **Responsibilities:**
-- Implement the **Planning Agent** that accumulates Pydantic results from the 3 Evidence Agents.
-- Design the transition to **Phase 1** (Passport v0 generation) using LangChain reasoning chains.
-- Build the "Hypothesis Engine" (Mode A & Mode B logic).
-- Implement the "Belief Updater" (Logic that adjusts confidence based on outcomes).
+- Implement the **Autonomous Planning Graph** (LangGraph) that manages agent transitions.
+- Design the transition to **Phase 1** (Passport v0 generation) as a directed edge in the graph.
+- Build the "Hypothesis Engine" (Mode A & Mode B logic) as cyclic graph nodes.
+- Implement the "Belief Updater" as a state update function within the graph.
 - Manage the PostgreSQL database (State & History).
 
 ### Member 3: The Product Engineer (Frontend & UX)
@@ -37,26 +37,26 @@
 ### Prompt for Member 1 (Person 0 - Evidence Specialist)
 ```text
 You are an expert Backend & Parsing Specialist working on "Aiversehack01". 
-**Project Philosophy:** We are building a "Scientist". My job is to gather evidence via 3 specialized agents.
+**Project Philosophy:** We are building a "Scientist". My job is to gather evidence via 3 specialized agents acting as nodes in a LangGraph.
 **My Role:** I am responsible for creating:
-1. A **Resume Parsing Agent** using LangChain & Pydantic.
-2. A **GitHub Parsing Agent** using LangChain & Pydantic.
-3. A **LinkedIn Parsing Agent** using LangChain & Pydantic.
-My goal is to provide structured Pydantic Evidence Objects to the Planning Agent.
-**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Implement the GitHub Agent with LangChain"]
-**Constraint:** Use Pydantic schemas for all outputs. Do not rate the user. Only extract evidence.
+1. A **Resume Parsing Agent** node.
+2. A **GitHub Parsing Agent** node.
+3. A **LinkedIn Parsing Agent** node.
+My goal is to provide structured Pydantic Evidence Objects into the LangGraph State.
+**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Implement the GitHub node and its status logic"]
+**Constraint:** Use Pydantic schemas for all outputs. Do not rate the user. Ensure the graph can handle partial data ingestion.
 ```
 
 ### Prompt for Member 2 (The Strategic Brain)
 ```text
 You are an expert AI Strategist working on "Aiversehack01".
-**Project Philosophy:** We are building a "Scientist". I am the core thinking brain.
-**My Role:** I am responsible for the **Planning Agent**. I accumulate evidence (Pydantic objects) from the 3 Ingestion Agents and generate the "Failure Passport v0" using LangChain/LangGraph logic. I also manage the "Hypothesis Engine" and "Belief Updater".
-**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Build the Planning Agent accumulator chain"]
+**Project Philosophy:** We are building a "Scientist". I am responsible for the cyclic multi-agent orchestration.
+**My Role:** I am responsible for the **Autonomous Planning Graph** (LangGraph). I manage how evidence flows, how the "Failure Passport v0" is generated, and how rejections trigger the "Belief Updater" node to loop back for strategy refinement.
+**Current Task:** [INSERT YOUR CURRENT TASK HERE, e.g., "Define the Graph Edges for the Rejection cycle"]
 **Constraint:** 
-1. The Planning Agent must wait for all 3 ingestion results before finalizing the Passport.
-2. Use LangChain for all complex reasoning and decision-making logic.
-3. Focus on the "Learning Loop": Failure -> Confidence Update.
+1. The graph must be fully autonomous—deciding when enough evidence is gathered.
+2. Use LangGraph State for all persistent belief tracking.
+3. Focus on the "Learning Loop": Failure -> Confidence Update -> New Strategy Node.
 ```
 
 ### Prompt for Member 3 (The Product Engineer)

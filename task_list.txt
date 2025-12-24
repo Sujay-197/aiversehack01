@@ -8,11 +8,12 @@
 
 - [ ] **Phase 1: Identity & The Failure Passport** <!-- id: 5 -->
     - [ ] Define **Pydantic Evidence Models** (Resume, GitHub, LinkedIn schemas) <!-- id: 6 -->
-    - [ ] Implement `Resume Agent` (LangChain + PydanticOutputParser) <!-- id: 7 -->
-    - [ ] Implement `GitHub Agent` (LangChain chain for tech verification) <!-- id: 8 -->
-    - [ ] Implement `LinkedIn Agent` (LangChain chain for profile context) <!-- id: 9 -->
-    - [ ] Implement `Planning Agent` (LangChain accumulator -> Passport v0) <!-- id: 10 -->
-    - [ ] **Constraint Check:** Ensure NO "Rating" happens here, only "Mapping". <!-- id: 11 -->
+    - [ ] Define **LangGraph State Schema** (BeliefState + EvidenceState) <!-- id: 7 -->
+    - [ ] Implement `Resume Node` (LangChain + Pydantic) <!-- id: 8 -->
+    - [ ] Implement `GitHub Node` (Tech verification logic) <!-- id: 9 -->
+    - [ ] Implement `LinkedIn Node` (Profile context logic) <!-- id: 10 -->
+    - [ ] Implement `Planning Accumulator Graph` (LangGraph edges & compilation) <!-- id: 11 -->
+    - [ ] **Constraint Check:** Ensure NO "Rating" happens here, only "Mapping". <!-- id: 12 -->
 
 - [ ] **Phase 2: The Hypothesis Engine** <!-- id: 10 -->
     - [ ] Implement `Mode A` Logic (Hypothesis-Guided: "Test Weakest Belief") <!-- id: 11 -->
