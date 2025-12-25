@@ -1,7 +1,7 @@
 from textwrap import dedent
 from google import genai
 
-class tagExtracter:
+class tagExtractor:
   def __init__(self, api_key = None, model = ""):
     self.client = genai.Client(api_key=api_key)
     self.model = model
