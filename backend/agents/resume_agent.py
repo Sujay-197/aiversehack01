@@ -19,11 +19,10 @@ if not logger.handlers:
 
 class ResumeAgent:
     def __init__(self):
-        # Enforce usage of config or env vars via config
-        # Note: config.py doesn't have API_KEY, so we still pull from env, but we log cleanly.
-        api_key = os.getenv("GEMINI_API_KEY")
+        # Enforce usage of config
+        api_key = config.GEMINI_API_KEY
         if not api_key:
-            logger.warning("GEMINI_API_KEY not set. Resume analysis will fail.")
+            logger.warning("GEMINI_API_KEY not set in environment. Resume analysis will fail.")
         
         self.client = genai.Client(api_key=api_key)
         self.model = config.LLM.MODEL_NAME

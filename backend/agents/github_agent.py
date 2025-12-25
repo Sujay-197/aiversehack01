@@ -17,9 +17,9 @@ if not logger.handlers:
 
 class GitHubAgent:
     def __init__(self):
-        token = os.getenv("GIT_API")
+        token = config.GITHUB_API_KEY
         if not token:
-            logger.warning("GIT_API not set. Rate limits will be low.")
+            logger.warning("GIT_API (GitHub Token) not set in environment. Rate limits will be low.")
             self.github = Github()
         else:
             self.github = Github(token)

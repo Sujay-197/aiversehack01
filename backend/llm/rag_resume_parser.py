@@ -32,12 +32,12 @@ class RAGResumeParser:
         Initialize RAG parser
         
         Args:
-            api_key: Gemini API key (defaults to GEMINI_API_KEY env var)
+            api_key: Gemini API key (defaults to Config.GEMINI_API_KEY)
         """
-        key = api_key or os.getenv("GEMINI_API_KEY", "keyapi")
+        key = api_key or config.GEMINI_API_KEY or "keyapi"
         
         if key == "keyapi":
-            print("[WARNING] Using placeholder API key. Set GEMINI_API_KEY.")
+            print("[WARNING] Using placeholder API key. Set GEMINI_API_KEY environment variable.")
         
         # Initialize LangChain components
         self.llm = ChatGoogleGenerativeAI(

@@ -7,6 +7,8 @@ import os
 import json
 from typing import Dict, List, Optional
 
+from backend.config import config
+
 class LLMClient:
     """
     Wrapper for Gemini API calls
@@ -16,12 +18,13 @@ class LLMClient:
         Initialize Gemini client
         
         Args:
-            api_key: Gemini API key. If None, reads from env var GEMINI_API_KEY
+            api_key: Gemini API key. If None, reads from Config.GEMINI_API_KEY
         """
-        key = api_key or os.getenv("GEMINI_API_KEY", "keyapi")
+        key = api_key or config.GEMINI_API_KEY
         
-        if key == "keyapi":
-            print("[WARNING] Using placeholder API key. Set GEMINI_API_KEY environment variable.")
+        if not key:
+            print("[WARNING] GEMINI_API_KEY not configured. Set environment variable.")
+            key = "keyapi" # Keep placeholder for fallback logic if needed
         
         genai.configure(api_key=key)
         self.model = genai.GenerativeModel('gemini-2.0-flash-exp')

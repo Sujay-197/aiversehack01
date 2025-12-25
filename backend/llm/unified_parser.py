@@ -8,7 +8,7 @@ import uuid
 from backend.models import ResumeEvidence
 from backend.llm.resume_parser import ResumeParser
 from backend.llm.rag_resume_parser import RAGResumeParser
-import os
+from backend.config import config
 
 class UnifiedResumeParser:
     """
@@ -21,7 +21,7 @@ class UnifiedResumeParser:
     """
     
     def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key or os.getenv("GEMINI_API_KEY", "keyapi")
+        self.api_key = api_key or config.GEMINI_API_KEY or "keyapi"
         self._rag_parser: Optional[RAGResumeParser] = None
         self._direct_parser: Optional[ResumeParser] = None
     

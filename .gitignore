@@ -10,3 +10,10 @@ ENV/
 env/
 # Artifacts
 C:/Users/RITHAAESH/.gemini/antigravity/brain/
+
+*.db
+.DS_Store
+node_modules/
+.next/
+out/
+build/

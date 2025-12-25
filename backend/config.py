@@ -29,6 +29,10 @@ class Config:
     THRESHOLDS = Thresholds()
     LLM = LLMConfig()
     
+    # API Keys
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    GITHUB_API_KEY = os.getenv("GIT_API") # GitHub agent currently uses GIT_API
+    
     # Paths
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     DATA_DIR = os.path.join(BASE_DIR, "data")
