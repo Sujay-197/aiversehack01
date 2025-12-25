@@ -19,84 +19,13 @@ class RAGResumeParser:
     Stores example resumes and retrieves similar ones for context
     """
     
-    # Example parsed resumes (few-shot learning pool)
-    EXAMPLE_RESUMES = [
-        {
-            "resume_text": """
-John Smith
-john@email.com
+from backend.config import config
 
-Senior Software Engineer with 8 years building scalable systems
-
-EXPERIENCE
-- Staff Engineer, TechCorp (2020-2024, 4 years)
-  Built microservices in Python and Go
-  Managed team of 5 engineers
-  
-- Backend Engineer, StartupXYZ (2016-2020, 4 years)
-  Developed REST APIs with Django
-  Worked with PostgreSQL and Redis
-
-SKILLS: Python, Go, Django, PostgreSQL, Redis, Docker, AWS
-""",
-            "parsed_output": {
-                "full_name": "John Smith",
-                "email": "john@email.com",
-                "summary": "Senior Software Engineer with 8 years building scalable systems",
-                "skills": [
-                    {"name": "Python", "category": "Language", "years_of_experience": 8.0},
-                    {"name": "Go", "category": "Language", "years_of_experience": 4.0},
-                    {"name": "Django", "category": "Framework", "years_of_experience": 4.0},
-                    {"name": "PostgreSQL", "category": "Database", "years_of_experience": 4.0},
-                    {"name": "Docker", "category": "Tool", "years_of_experience": 3.0},
-                    {"name": "AWS", "category": "Cloud", "years_of_experience": 3.0}
-                ],
-                "work_experience": [
-                    {"title": "Staff Engineer", "company": "TechCorp", "years": 4.0},
-                    {"title": "Backend Engineer", "company": "StartupXYZ", "years": 4.0}
-                ]
-            }
-        },
-        {
-            "resume_text": """
-Sarah Chen
-sarah.chen@gmail.com
-
-Full Stack Developer | React & Node.js Specialist
-
-PROFESSIONAL EXPERIENCE
-Frontend Engineer @ WebCo (2022-Present, 2 years)
-- Built responsive UIs with React and TypeScript
-- Implemented state management with Redux
-
-Junior Developer @ AgencyCo (2020-2022, 2 years)
-- Created landing pages with HTML/CSS/JavaScript
-- Basic Node.js backend work
-
-TECHNICAL SKILLS
-Languages: JavaScript, TypeScript, HTML, CSS
-Frameworks: React, Node.js, Express
-Tools: Git, Webpack, npm
-""",
-            "parsed_output": {
-                "full_name": "Sarah Chen",
-                "email": "sarah.chen@gmail.com",
-                "summary": "Full Stack Developer specializing in React and Node.js",
-                "skills": [
-                    {"name": "JavaScript", "category": "Language", "years_of_experience": 4.0},
-                    {"name": "TypeScript", "category": "Language", "years_of_experience": 2.0},
-                    {"name": "React", "category": "Framework", "years_of_experience": 2.0},
-                    {"name": "Node.js", "category": "Framework", "years_of_experience": 4.0},
-                    {"name": "HTML", "category": "Language", "years_of_experience": 4.0},
-                    {"name": "CSS", "category": "Language", "years_of_experience": 4.0}
-                ],
-                "work_experience": [
-                    {"title": "Frontend Engineer", "company": "WebCo", "years": 2.0},
-                    {"title": "Junior Developer", "company": "AgencyCo", "years": 2.0}
-                ]
-            }
-        }
-    ]
+class RAGResumeParser:
+    """
+    Resume parser using RAG for few-shot learning
+    Stores example resumes and retrieves similar ones for context
+    """
     
     def __init__(self, api_key: str = None):
         """
@@ -112,25 +41,36 @@ Tools: Git, Webpack, npm
         
         # Initialize LangChain components
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-2.0-flash-exp",
+            model=config.LLM.MODEL_NAME,
             google_api_key=key,
-            temperature=0  # Deterministic for parsing
+            temperature=config.LLM.TEMPERATURE_DETERMINISTIC
         )
         
         self.embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/embedding-001",
+            model=config.LLM.EMBEDDING_MODEL,
             google_api_key=key
         )
         
         # Build vector store from examples
         self.vector_store = self._build_vector_store()
     
+    def _load_examples(self) -> List[Dict]:
+        """Load examples from JSON file"""
+        try:
+            with open(config.RAG_EXAMPLES_PATH, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print(f"[WARNING] Examples file not found at {config.RAG_EXAMPLES_PATH}")
+            return []
+
     def _build_vector_store(self) -> FAISS:
         """
         Create FAISS vector store from example resumes
         """
         documents = []
-        for idx, example in enumerate(self.EXAMPLE_RESUMES):
+        examples = self._load_examples()
+        
+        for idx, example in enumerate(examples):
             # Store resume text + metadata about parsed output
             metadata = {
                 "example_id": idx,
@@ -141,6 +81,18 @@ Tools: Git, Webpack, npm
                 metadata=metadata
             )
             documents.append(doc)
+        
+        # Create vector store
+        if not documents:
+             # Create empty store if no docs (handled by LangChain usually, or use dummy)
+             pass 
+
+        vector_store = FAISS.from_documents(
+            documents,
+            self.embeddings
+        )
+        
+        return vector_store
         
         # Create vector store
         vector_store = FAISS.from_documents(
@@ -255,18 +207,28 @@ Now parse this resume following the same format:"""),
     def add_example(self, resume_text: str, parsed_output: Dict):
         """
         Add new example to the RAG knowledge base
-        Useful for continuous learning
+        Useful for continuous learning. Persists to JSON file.
         
         Args:
             resume_text: Raw resume
             parsed_output: Correct parsed output
         """
-        # Add to examples list
-        self.EXAMPLE_RESUMES.append({
+        # Load existing
+        examples = self._load_examples()
+        
+        # Add new
+        examples.append({
             "resume_text": resume_text,
             "parsed_output": parsed_output
         })
         
+        # Save back to file
+        try:
+            with open(config.RAG_EXAMPLES_PATH, 'w', encoding='utf-8') as f:
+                json.dump(examples, f, indent=2)
+            print(f"[RAG Parser] Added new example and saved to file. Total: {len(examples)}")
+        except Exception as e:
+             print(f"[RAG Parser Error] Failed to save example: {e}")
+        
         # Rebuild vector store
         self.vector_store = self._build_vector_store()
-        print(f"[RAG Parser] Added new example. Total: {len(self.EXAMPLE_RESUMES)}")

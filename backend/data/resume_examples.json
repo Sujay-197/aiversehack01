@@ -1,0 +1,106 @@
+[
+    {
+        "resume_text": "\nJohn Smith\njohn@email.com\n\nSenior Software Engineer with 8 years building scalable systems\n\nEXPERIENCE\n- Staff Engineer, TechCorp (2020-2024, 4 years)\n  Built microservices in Python and Go\n  Managed team of 5 engineers\n  \n- Backend Engineer, StartupXYZ (2016-2020, 4 years)\n  Developed REST APIs with Django\n  Worked with PostgreSQL and Redis\n\nSKILLS: Python, Go, Django, PostgreSQL, Redis, Docker, AWS\n",
+        "parsed_output": {
+            "full_name": "John Smith",
+            "email": "john@email.com",
+            "summary": "Senior Software Engineer with 8 years building scalable systems",
+            "skills": [
+                {
+                    "name": "Python",
+                    "category": "Language",
+                    "years_of_experience": 8.0
+                },
+                {
+                    "name": "Go",
+                    "category": "Language",
+                    "years_of_experience": 4.0
+                },
+                {
+                    "name": "Django",
+                    "category": "Framework",
+                    "years_of_experience": 4.0
+                },
+                {
+                    "name": "PostgreSQL",
+                    "category": "Database",
+                    "years_of_experience": 4.0
+                },
+                {
+                    "name": "Docker",
+                    "category": "Tool",
+                    "years_of_experience": 3.0
+                },
+                {
+                    "name": "AWS",
+                    "category": "Cloud",
+                    "years_of_experience": 3.0
+                }
+            ],
+            "work_experience": [
+                {
+                    "title": "Staff Engineer",
+                    "company": "TechCorp",
+                    "years": 4.0
+                },
+                {
+                    "title": "Backend Engineer",
+                    "company": "StartupXYZ",
+                    "years": 4.0
+                }
+            ]
+        }
+    },
+    {
+        "resume_text": "\nSarah Chen\nsarah.chen@gmail.com\n\nFull Stack Developer | React & Node.js Specialist\n\nPROFESSIONAL EXPERIENCE\nFrontend Engineer @ WebCo (2022-Present, 2 years)\n- Built responsive UIs with React and TypeScript\n- Implemented state management with Redux\n\nJunior Developer @ AgencyCo (2020-2022, 2 years)\n- Created landing pages with HTML/CSS/JavaScript\n- Basic Node.js backend work\n\nTECHNICAL SKILLS\nLanguages: JavaScript, TypeScript, HTML, CSS\nFrameworks: React, Node.js, Express\nTools: Git, Webpack, npm\n",
+        "parsed_output": {
+            "full_name": "Sarah Chen",
+            "email": "sarah.chen@gmail.com",
+            "summary": "Full Stack Developer specializing in React and Node.js",
+            "skills": [
+                {
+                    "name": "JavaScript",
+                    "category": "Language",
+                    "years_of_experience": 4.0
+                },
+                {
+                    "name": "TypeScript",
+                    "category": "Language",
+                    "years_of_experience": 2.0
+                },
+                {
+                    "name": "React",
+                    "category": "Framework",
+                    "years_of_experience": 2.0
+                },
+                {
+                    "name": "Node.js",
+                    "category": "Framework",
+                    "years_of_experience": 4.0
+                },
+                {
+                    "name": "HTML",
+                    "category": "Language",
+                    "years_of_experience": 4.0
+                },
+                {
+                    "name": "CSS",
+                    "category": "Language",
+                    "years_of_experience": 4.0
+                }
+            ],
+            "work_experience": [
+                {
+                    "title": "Frontend Engineer",
+                    "company": "WebCo",
+                    "years": 2.0
+                },
+                {
+                    "title": "Junior Developer",
+                    "company": "AgencyCo",
+                    "years": 2.0
+                }
+            ]
+        }
+    }
+]
