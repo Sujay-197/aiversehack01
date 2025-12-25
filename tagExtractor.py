@@ -6,7 +6,7 @@ class tagExtractor:
     self.client = genai.Client(api_key=api_key)
     self.model = model
 
-  def extract(resume_text):
+  def extract(self, resume_text):
       prompt = dedent(f"""
         You are an information extraction system.
 

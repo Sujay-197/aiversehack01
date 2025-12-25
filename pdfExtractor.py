@@ -20,7 +20,7 @@ class extractPDF:
         return tags
 
 if __name__ == "__main__":
-    pdf_path = r""
+    pdf_path = r"C:\Users\Vishal\Downloads\DOC-20251213-WA0001..pdf"
     pdf = extractPDF(pdf_path)
     tags = pdf.extract_tags()
     print(tags)
