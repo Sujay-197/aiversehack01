@@ -4,7 +4,7 @@ from tagExtractor import tagExtractor
 class extractPDF:
     def __init__(self, pdf_path):
         self.pdf_path = pdf_path
-        self.extracter = tagExtractor(api_key = os.getenv("GEMINI_API_KEY"), model = "gemini-2.5-flash")
+        self.extractor = tagExtractor(api_key = os.getenv("GEMINI_API_KEY"), model = "gemini-2.5-flash")
     
     def extract_text(self):
         with open(self.pdf_path, 'rb') as file:
@@ -16,7 +16,7 @@ class extractPDF:
 
     def extract_tags(self):
         resume_text = self.extract_text()
-        tags = self.extracter.extract(resume_text)
+        tags = self.extractor.extract(resume_text)
         return tags
 
 if __name__ == "__main__":
