@@ -1,9 +1,21 @@
+
 import requests
 from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
 from typing import List
 from backend.models import Opportunity
+from backend.config import config
 import datetime
+import logging
+
+# Configure Logging
+logger = logging.getLogger("MarketAgent")
+logger.setLevel(logging.INFO)
+if not logger.handlers:
+    ch = logging.StreamHandler()
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
 
 class MarketAgent:
     """
@@ -13,24 +25,24 @@ class MarketAgent:
     """
     
     def search(self, query: str = "Python") -> List[Opportunity]:
-        print(f"[MarketAgent] Searching market for: '{query}'...")
+        logger.info(f"Searching market for: '{query}'...")
         opportunities = []
         
         # 1. Fetch Hackathons (Devpost)
         try:
             hacks = self.fetch_hackathons(query)
             opportunities.extend(hacks)
-            print(f"  -> Found {len(hacks)} hackathons.")
+            logger.info(f"Found {len(hacks)} hackathons.")
         except Exception as e:
-            print(f"  -> Error fetching hackathons: {e}")
+            logger.error(f"Error fetching hackathons: {e}")
 
         # 2. Fetch Jobs (DuckDuckGo)
         try:
             jobs = self.fetch_jobs(query)
             opportunities.extend(jobs)
-            print(f"  -> Found {len(jobs)} jobs via DDGS.")
+            logger.info(f"Found {len(jobs)} jobs via DDGS.")
         except Exception as e:
-            print(f"  -> Error fetching jobs: {e}")
+            logger.error(f"Error fetching jobs: {e}")
             
         return opportunities
 
@@ -44,23 +56,18 @@ class MarketAgent:
         try:
             resp = requests.get(url, headers=headers, timeout=10)
         except Exception as e:
-            print(f"  -> Devpost connection failed: {e}")
+            logger.warning(f"Devpost connection failed: {e}")
             return []
 
         if resp.status_code != 200:
+            logger.warning(f"Devpost returned status {resp.status_code}")
             return []
             
         soup = BeautifulSoup(resp.text, "html.parser")
         results = []
         
-        # Strategy: Find all links. Check if they look like hackathon URLs.
-        # Hackathon URLs are typically: https://<name>.devpost.com/
-        # Exclude: devpost.com, secure.devpost.com, help.devpost.com, etc.
-        
         seen_urls = set()
         
-        # Try finding standard tile containers first (best effort)
-        # Often they are <div class="hackathon-tile"> or <a class="clearfix">
         candidates = soup.find_all("a", href=True)
         
         for a in candidates:
@@ -77,7 +84,6 @@ class MarketAgent:
                 seen_urls.add(clean_url)
                 
                 # Extract Title
-                # If wrapped in <h3> or similar
                 title_tag = a.find("h3") or a.find("div", class_="title")
                 title = title_tag.get_text(strip=True) if title_tag else clean_url.split("//")[1].split(".")[0].replace("-", " ").title()
                 
@@ -102,12 +108,10 @@ class MarketAgent:
         Uses DuckDuckGo to find job postings.
         """
         results = []
-        # Search for: site:greenhouse.io OR site:lever.co "Python Intern"
         search_term = f'(site:greenhouse.io OR site:lever.co OR site:linkedin.com/jobs) "{query}" intitle:Apply'
         
         try:
             with DDGS() as ddgs:
-                # fetch 4 results using html backend
                 ddgs_gen = ddgs.text(search_term, max_results=4, backend="html")
                 if not ddgs_gen:
                     return []
@@ -141,6 +145,6 @@ class MarketAgent:
                         source="ddgs"
                     ))
         except Exception as e:
-            print(f"  -> DDGS error: {e}")
+            logger.warning(f"DDGS error: {e}")
             
         return results
