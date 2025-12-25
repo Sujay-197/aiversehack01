@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+devpost_debug.html
+*.log
+.venv/
+venv/
+ENV/
+env/
+# Artifacts
+C:/Users/RITHAAESH/.gemini/antigravity/brain/

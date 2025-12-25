@@ -12,13 +12,27 @@ CREATE TABLE users (
 );
 
 -- 2. Evidence Table (Raw data artifacts)
+-- Enable pgvector extension
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- 2. Evidence Table (Raw data artifacts)
 CREATE TABLE evidence (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id),
     type TEXT NOT NULL, -- 'resume', 'github_repo', 'linkedin_profile'
-    content_raw TEXT, -- Text extracted from PDF or raw JSON from API
+    content_raw JSONB, -- CHANGED: Store as JSONB to hold the Pydantic dump
     source_url TEXT,
     captured_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 2b. Evidence Embeddings (Vector Search)
+CREATE TABLE evidence_embeddings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    evidence_id UUID REFERENCES evidence(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id), -- Denormalized for speed
+    chunk_text TEXT, -- The actual text that was vectorized
+    embedding vector(1536), -- Compatible with OpenAI text-embedding-3-small
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- 3. BeliefState Table (The Failure Passport)
