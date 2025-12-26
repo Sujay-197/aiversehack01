@@ -18,6 +18,7 @@ class tagExtractor:
         - Do not hallucinate missing data
         - If a field is not present, return null
         - No soft skills
+        - Avoid replication of data
 
         Output structure:
         {{
