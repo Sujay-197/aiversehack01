@@ -30,7 +30,7 @@ class PDFExtractor:
         return None
 
 if __name__ == "__main__":
-    pdf_path = r"C:\Users\Vishal\Downloads\DOC-20251213-WA0001..pdf"
+    pdf_path = r""
     if os.path.exists(pdf_path):
         pdf = PDFExtractor(pdf_path)
         tags = pdf.extract_tags()
