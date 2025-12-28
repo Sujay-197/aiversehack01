@@ -13,7 +13,7 @@ Instead of static advice, resume scoring, or one-off chatbots, this system:
 - **Learns from outcomes** such as rejections, ghosting, and feedback.
 - **Continuously updates its strategy** using a persistent belief state.
 
-**Core Idea:** Rejections are not failures — they are valuable **data points** for optimization.
+**Core Idea:** Rejections are not failures, they are valuable **data points** for optimization.
 
 ---
 
@@ -48,6 +48,38 @@ Every career move is modeled as part of a rigorous protocol:
 3.  **Outcome**: Rejection, Interview, or Offer.
 4.  **Belief Update**: The AI adjusts its confidence in your skills (e.g., Python confidence drops from 70% -> 65%).
 5.  **Replanning**: The strategy evolves automatically (e.g., *" pivot to Mid-level Data Engineering"*).
+
+---
+
+## 🎮 Two Operational Modes
+
+The Career Lab operates in two complementary modes, allowing flexibility in how you approach career development:
+
+### **Mode A: Hypothesis-Guided (AI-Driven Exploration)**
+In this mode, the AI acts as a proactive career scientist, identifying gaps and suggesting experiments.
+
+**How it works:**
+- The system analyzes your **Belief State** (Career Passport) and identifies low-confidence areas.
+- It generates targeted hypotheses to test specific assumptions.
+- **Example:** 
+  - *"Confidence in 'Frontend Skills' is currently 40%. Suggestion: Build a React App with TypeScript to increase confidence and gather evidence."*
+  - *"Your GitHub shows no DevOps projects. Hypothesis: Deploy a containerized app to test infrastructure skills."*
+
+**Best for:** Exploratory learning, skill discovery, and filling unknown gaps.
+
+### **Mode B: Constrained Dev (User-Driven Goal Setting)**
+In this mode, you set a specific career target, and the AI reverse-engineers the path.
+
+**How it works:**
+- You declare a goal (e.g., *"I want a job at Google"* or *"I want to become a Senior Backend Engineer"*).
+- The system compares your current Belief State against market requirements for that goal.
+- It identifies the **confidence gap** and generates a prioritized action plan.
+- **Example:**
+  - *User Goal: "Google SWE Internship"*
+  - *System Analysis: "Current belief state shows 40% confidence for Big Tech. Gap areas: System Design (20%), LeetCode Performance (35%), Open Source Contributions (10%)."*
+  - *Recommended Path: "Complete 50 LeetCode Medium problems → Contribute to 2 CNCF projects → Build a distributed system project."*
+
+**Best for:** Targeted job hunting, interview preparation, and goal-oriented skill building.
 
 ---
 
