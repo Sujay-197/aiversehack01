@@ -1,12 +1,11 @@
-# 🧪 Aiversehack01 — The Career Scientist
-
+# 🧪  The Career Lab
 **An Agentic AI System for Evidence-Driven Career Growth**
 
 ---
 
 ## 🚀 Overview
 
-**Aiversehack01** is an Agentic AI Career Development Assistant that treats career growth as a scientific experiment, not a guessing game.
+**The Career Lab** is an Agentic AI Career Development Assistant that treats career growth as a scientific experiment, not a guessing game.
 
 Instead of static advice, resume scoring, or one-off chatbots, this system:
 - **Forms hypotheses** about a user’s career readiness.
@@ -30,7 +29,7 @@ Career growth today requires manual reasoning, while existing tools remain state
 
 ## 💡 Solution
 
-Aiversehack01 is a long-term **AI Career Scientist** that maintains a persistent model of you. It:
+The Career Lab is a long-term **AI Career Scientist** that maintains a persistent model of you. It:
 1. **Understands** your evolving career profile via Evidence Ingestion.
 2. **Reasons** about job market requirements vs. your actual skills.
 3. **Plans** personalized, adaptive skill roadmaps.
@@ -56,7 +55,7 @@ Every career move is modeled as part of a rigorous protocol:
 
 ### 1. Belief-State Career Model
 Skills are stored as **probabilistic beliefs**, not binary flags.
-| Traditional Tools | Aiversehack01 |
+| Traditional Tools | The Career Lab |
 | :--- | :--- |
 | "Python: Yes" | "Python: **65% confidence**, backed by GitHub commit history + 2 failed interviews" |
 
@@ -138,65 +137,14 @@ graph TD
 
 ---
 
-## 🛠️ Getting Started (Local Development)
-
 ### Prerequisites
 - Python 3.10+
 - Node.js 18+
 - Supabase Account (or local Postgres)
 - GitHub OAuth App Credentials
 
-### 1. Environment Setup
-Create a `.env` file in **root** (for backend) and `frontend/.env` (for frontend).
-Refer to `.env.example` in the root.
-
-### 2. Start the Backend (The Brain)
-From the project root (`aiversehack01/`):
-```bash
-python -m uvicorn backend.main:app --reload
-```
-*Server runs on `http://localhost:8000`*
-
-### 3. Start the Frontend (The Lab)
-From the `frontend/` directory:
-```bash
-cd frontend
-npm install
-npm run dev
-```
-*UI runs on `http://localhost:3000`*
 
 ---
-
-## 📊 Evaluation Alignment
-
--   **Architecture & Autonomy (40%)**: Stateful agent orchestration, persistent memory, autonomous replanning.
--   **User Experience (20%)**: Notebook-style UI, complex reasoning hidden behind clarity.
--   **Innovation & Adaptability (20%)**: Hypothesis-driven design, rejection-as-data philosophy.
--   **Impact & Alignment (20%)**: Democratizes mentorship, scales career intelligence.
-
----
-
-## ⚠️ Limitations & Honest Critique
--   **Data Sparsity**: Early stage needs more user data to converge beliefs.
--   **Signal Noise**: "Ghosting" by companies is a hard signal to interpret.
--   **User Engagement**: Requires the user to actively "run" the experiments.
-
-*Why it still works: Probabilistic beliefs handle this uncertainty better than static rules.*
-
----
-
-## 🧭 Vision
-Aiversehack01 is not just a career tool. It is a **Decision Scientist framework** that can expand into:
--   Academic planning
--   Research guidance
--   Startup validation
--   Skill certification systems
-
----
-
-## 📜 License
-MIT License
 
 ## 🤝 Contributors
-Built for **Aiversehack01 Hackathon** by a team exploring Agentic AI beyond chatbots.
+Built for **Anokha 2026 AI Verse Hackathon** by a team (PS: we call ourselves Manhattan Project coz) exploring Agentic AI beyond chatbots.
