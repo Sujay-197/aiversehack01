@@ -1,83 +1,89 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
+import { Lightbulb, ArrowRight, TrendingDown, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
-import { Lightbulb, Calendar, ArrowRightLeft, MessageSquareQuote } from "lucide-react";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 
-const reflections = [
-    {
-        id: 1,
-        date: "2025-12-24",
-        title: "Resume Keyword Mismatch",
-        attribute: "Python Proficiency",
-        change: "0.85 → 0.72",
-        insight: "Confidence dropped after 5 ghostings at Series A startups. Hypothesis: Resume lacks 'Asyncio' and 'FastAPI' specific metrics.",
-    },
-    {
-        id: 2,
-        date: "2025-12-20",
-        title: "The Fintech Gap",
-        attribute: "React Expertise",
-        change: "0.42 → 0.25",
-        insight: "Failed technical screen at Stripe. Realized that 'knowing React' != 'understanding high-concurrency state management'.",
-    },
-];
+type Insight = {
+    id: number;
+    date: string;
+    trigger: string;
+    delta: number;
+    belief: string;
+    insight: string;
+};
 
-export default function Insights() {
+export default function InsightsPage() {
+    const { data: session } = useAuth();
+    const [insights, setInsights] = useState<Insight[]>([]);
+
+    useEffect(() => {
+        if (session) {
+            api.get("/api/insights").then(async (res) => {
+                if (res.ok) {
+                    const data = await res.json();
+                    setInsights(data);
+                }
+            });
+        }
+    }, [session]);
+
     return (
-        <div className="space-y-10">
-            <header className="space-y-2">
-                <h2 className="text-3xl font-bold flex items-center gap-2">
-                    <Lightbulb className="w-8 h-8 text-amber-400" />
-                    Insights Log
-                </h2>
-                <p className="text-muted-foreground italic">The scientific record of your career evolution.</p>
-            </header>
+        <div className="space-y-8 animate-in fade-in duration-500">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold flex items-center gap-3">
+                        <Lightbulb className="w-8 h-8 text-purple-400" />
+                        Insights Log
+                    </h1>
+                    <p className="text-muted-foreground mt-1">
+                        The learning journal of the "Scientist".
+                    </p>
+                </div>
+            </div>
 
-            <div className="relative border-l border-white/10 ml-4 pl-10 space-y-12 pb-20">
-                {reflections.map((ref, index) => (
+            <div className="space-y-8 relative before:absolute before:left-8 before:top-4 before:bottom-0 before:w-0.5 before:bg-white/10">
+                {insights.map((insight) => (
                     <motion.div
-                        key={ref.id}
+                        key={insight.id}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="relative"
+                        className="pl-20 relative"
                     >
-                        {/* Timeline dot */}
-                        <div className="absolute -left-[50px] top-1 w-5 h-5 rounded-full bg-background border-4 border-amber-400" />
+                        {/* Timeline Dot */}
+                        <div className="absolute left-6 top-6 w-5 h-5 rounded-full bg-[#0F172A] border-4 border-purple-500/50 shadow-[0_0_10px_rgba(168,85,247,0.5)] z-10" />
 
-                        <div className="glass rounded-3xl p-8 space-y-6">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <span className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-1">
-                                        <Calendar className="w-3 h-3" /> {ref.date}
-                                    </span>
-                                    <h3 className="text-2xl font-bold italic tracking-tight">{ref.title}</h3>
-                                </div>
-                                <div className="px-4 py-2 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 font-bold flex items-center gap-2">
-                                    <ArrowRightLeft className="w-4 h-4" /> {ref.change}
-                                </div>
+                        <div className="glass p-6 rounded-3xl border border-white/5 space-y-4">
+                            <div className="flex items-center justify-between text-sm">
+                                <span className="text-muted-foreground font-mono">{insight.date}</span>
+                                <span className="font-bold text-accent uppercase tracking-wider text-xs bg-accent/10 px-2 py-1 rounded-md">
+                                    Trigger: {insight.trigger}
+                                </span>
                             </div>
 
-                            <div className="p-6 rounded-2xl bg-white/5 border border-white/5 space-y-4">
-                                <div className="flex items-center gap-2 text-primary font-bold uppercase text-[10px] tracking-widest">
-                                    <MessageSquareQuote className="w-4 h-4" /> Reflection Data
+                            <div className="flex gap-6 items-center">
+                                <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-2xl border ${insight.delta > 0
+                                    ? "bg-green-500/10 border-green-500/30 text-green-400"
+                                    : "bg-red-500/10 border-red-500/30 text-red-400"
+                                    }`}>
+                                    {insight.delta > 0 ? <TrendingUp className="w-6 h-6" /> : <TrendingDown className="w-6 h-6" />}
+                                    <span className="font-bold text-lg">{insight.delta > 0 ? '+' : ''}{insight.delta}%</span>
                                 </div>
-                                <p className="text-lg text-foreground italic leading-relaxed">
-                                    &ldquo;{ref.insight}&rdquo;
-                                </p>
-                            </div>
 
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs text-muted-foreground">Impacted Attribute:</span>
-                                <span className="px-2 py-0.5 rounded-lg bg-white/5 border border-white/5 text-xs font-mono">{ref.attribute}</span>
+                                <div className="space-y-1">
+                                    <div className="text-sm text-muted-foreground uppercase font-bold tracking-wider">
+                                        Belief Update: <span className="text-white">{insight.belief}</span>
+                                    </div>
+                                    <p className="text-lg leading-relaxed">
+                                        "{insight.insight}"
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </motion.div>
                 ))}
-
-                <div className="text-center py-10 opacity-50">
-                    <p className="text-sm font-mono tracking-tighter">-- END OF CURRENT RECORD --</p>
-                </div>
             </div>
         </div>
     );

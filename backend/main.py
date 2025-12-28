@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend import models_orm
@@ -15,6 +16,11 @@ origins = [
     "http://127.0.0.1:3000",
 ]
 
+# Allow dynamic origins from environment (for Netlify/Production)
+env_origins = os.getenv("ALLOWED_ORIGINS")
+if env_origins:
+    origins.extend([origin.strip() for origin in env_origins.split(",")])
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -25,6 +31,12 @@ app.add_middleware(
 
 # Include Routers
 app.include_router(auth.router)
+from backend.routers import onboarding, passport, hypotheses, experiments, insights
+app.include_router(onboarding.router)
+app.include_router(passport.router)
+app.include_router(hypotheses.router)
+app.include_router(experiments.router)
+app.include_router(insights.router)
 
 @app.get("/")
 def read_root():

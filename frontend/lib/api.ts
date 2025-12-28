@@ -1,10 +1,14 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+import { getSession } from "next-auth/react";
+
 export async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
-    const token = localStorage.getItem("token");
+    const session = await getSession();
+    const token = session?.user?.email; // For MVP, identifying by email
+
     const headers = {
         "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }),
+        ...(token && { "X-User-Email": token }), // Backend will trust this for now
         ...options.headers,
     };
 
@@ -14,10 +18,8 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {})
     });
 
     if (response.status === 401) {
-        // Token expired or invalid
-        localStorage.removeItem("token");
-        window.location.href = "/login";
-        return response;
+        // Handle unauthorized
+        // window.location.href = "/login"; // Optional: redirect
     }
 
     return response;

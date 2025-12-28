@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { cn, formatConfidence } from "@/lib/utils";
 import { useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext"; // Actually useSession
 import { useRouter } from "next/navigation";
 
 import { StatCard } from "@/components/ui/StatCard";
@@ -29,16 +29,22 @@ const recentExperiments = [
 ];
 
 export default function Dashboard() {
-    const { user, loading } = useAuth();
+    const { data: session, status } = useAuth(); // usage of useSession
     const router = useRouter();
+    const loading = status === "loading";
+    const user = session?.user;
 
     useEffect(() => {
-        if (!loading && !user) {
-            router.push("/login");
+        if (status === "unauthenticated") {
+            router.push("/");
         }
-    }, [user, loading, router]);
+    }, [status, router]);
 
-    if (loading || !user) return null;
+    if (loading || !user) return (
+        <div className="flex h-[50vh] items-center justify-center text-muted-foreground">
+            Loading Lab Data...
+        </div>
+    );
 
     return (
         <div className="space-y-10">
@@ -48,7 +54,7 @@ export default function Dashboard() {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-3xl font-bold"
                 >
-                    Welcome Back, {user.full_name || "Researcher"}
+                    Welcome Back, {user.name || "Researcher"}
                 </motion.h2>
                 <p className="text-muted-foreground mt-1 text-lg">
                     Your current <span className="text-foreground font-medium italic underline decoration-primary/50">Failure Passport</span> is 12% more refined this week.

@@ -1,149 +1,94 @@
+
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
+import { FlaskConical, ExternalLink, Ghost, XCircle, CheckCircle, Clock } from "lucide-react";
 import { motion } from "framer-motion";
-import {
-    FlaskConical,
-    Play,
-    CheckCircle2,
-    XCircle,
-    Timer,
-    ChevronRight,
-    PlusCircle
-} from "lucide-react";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 
-const experiments = [
-    {
-        id: 1,
-        title: "Backend Series A Test",
-        company: "Scale AI",
-        hypothesis: "If I apply to Backend roles, then my Python confidence will be validated at 0.8+.",
-        status: "Active",
-        started: "2025-12-23",
-        type: "Verification"
-    },
-    {
-        id: 2,
-        title: "Fintech Growth Leap",
-        company: "Stripe",
-        hypothesis: "If I pass the technical screen, then my React expertise matches high-frequency trading latency needs.",
-        status: "Completed",
-        outcome: "Failed",
-        reason: "Lacked deep understanding of Concurrent React rendering patterns.",
-        started: "2025-12-15",
-        type: "Learning"
-    },
-    {
-        id: 3,
-        title: "Sass Startup Pivot",
-        company: "Loom",
-        hypothesis: "If I contribute to the core dashboard, then I'll learn TypeScript generics in depth.",
-        status: "Proposed",
-        started: "-",
-        type: "Discovery"
-    },
-];
+type Experiment = {
+    id: number;
+    role: string;
+    company: string;
+    status: string;
+    date: string;
+    hypothesis_id: number;
+};
 
-export default function Experiments() {
+export default function ExperimentsPage() {
+    const { data: session } = useAuth();
+    const [experiments, setExperiments] = useState<Experiment[]>([]);
+
+    useEffect(() => {
+        if (session) {
+            api.get("/api/experiments").then(async (res) => {
+                if (res.ok) {
+                    const data = await res.json();
+                    setExperiments(data);
+                }
+            });
+        }
+    }, [session]);
+
     return (
-        <div className="space-y-10">
-            <header className="flex items-center justify-between">
-                <div className="space-y-1">
-                    <h2 className="text-3xl font-bold flex items-center gap-2">
-                        <FlaskConical className="w-8 h-8 text-primary" />
-                        Experimentation Log
-                    </h2>
-                    <p className="text-muted-foreground italic">Every application is just another data point in the career experiment.</p>
+        <div className="space-y-8 animate-in fade-in duration-500">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold flex items-center gap-3">
+                        <FlaskConical className="w-8 h-8 text-blue-400" />
+                        Lab Experiments
+                    </h1>
+                    <p className="text-muted-foreground mt-1">
+                        Tracking applications and actions as data collection points.
+                    </p>
                 </div>
-                <button className="px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl transition-colors font-bold">
-                    Archive
-                </button>
-            </header>
+            </div>
 
-            <div className="space-y-6">
-                {experiments.map((exp, index) => (
-                    <Link href={`/experiments/${exp.id}`} key={exp.id} className="block group">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="glass rounded-3xl p-8 relative overflow-hidden transition-all hover:scale-[1.01] hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/20"
-                        >
-                            {/* Status light */}
-                            <div className={cn(
-                                "absolute top-0 right-0 w-1.5 h-full",
-                                exp.status === "Active" ? "bg-primary" :
-                                    exp.status === "Completed" ? (exp.outcome === "Failed" ? "bg-learning" : "bg-verifying") :
-                                        "bg-muted"
-                            )} />
-
-                            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                                <div className="lg:col-span-3 space-y-4">
-                                    <div className="flex items-center gap-4">
-                                        <div className={cn(
-                                            "px-3 py-1 rounded-full text-[10px] uppercase font-black italic tracking-widest border",
-                                            exp.type === "Verification" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" :
-                                                exp.type === "Learning" ? "bg-orange-500/10 text-orange-400 border-orange-500/20" :
-                                                    "bg-purple-500/10 text-purple-400 border-purple-500/20"
-                                        )}>
-                                            {exp.type}
-                                        </div>
-                                        <h3 className="text-2xl font-bold uppercase tracking-tight">{exp.title}</h3>
-                                        <span className="text-muted-foreground font-mono">@ {exp.company}</span>
+            <div className="overflow-hidden rounded-3xl border border-white/10 glass">
+                <table className="w-full text-left">
+                    <thead className="bg-white/5 text-xs uppercase font-bold text-muted-foreground tracking-wider">
+                        <tr>
+                            <th className="px-6 py-4">Experiment (Role)</th>
+                            <th className="px-6 py-4">Company</th>
+                            <th className="px-6 py-4">Status</th>
+                            <th className="px-6 py-4">Date</th>
+                            <th className="px-6 py-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                        {experiments.map((exp) => (
+                            <tr key={exp.id} className="hover:bg-white/5 transition-colors group">
+                                <td className="px-6 py-4 font-medium">{exp.role}</td>
+                                <td className="px-6 py-4 text-muted-foreground">{exp.company}</td>
+                                <td className="px-6 py-4">
+                                    <div className={cn(
+                                        "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide",
+                                        {
+                                            "bg-white/10 text-slate-400": exp.status === "Ghosted",
+                                            "bg-red-500/10 text-red-400": exp.status === "Rejected",
+                                            "bg-green-500/10 text-green-400": exp.status === "Accepted",
+                                            "bg-blue-500/10 text-blue-400": exp.status === "Pending",
+                                        }
+                                    )}>
+                                        {exp.status === "Ghosted" && <Ghost className="w-3 h-3" />}
+                                        {exp.status === "Rejected" && <XCircle className="w-3 h-3" />}
+                                        {exp.status === "Accepted" && <CheckCircle className="w-3 h-3" />}
+                                        {exp.status === "Pending" && <Clock className="w-3 h-3" />}
+                                        {exp.status}
                                     </div>
-
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5 border-l-4 border-l-primary/30">
-                                        <p className="text-sm font-bold uppercase text-primary/70 tracking-tighter italic">Hypothesis:</p>
-                                        <p className="mt-1 text-lg font-medium leading-tight">&ldquo;{exp.hypothesis}&rdquo;</p>
-                                    </div>
-
-                                    {exp.status === "Completed" && (
-                                        <div className="space-y-2">
-                                            <div className="flex items-center gap-2">
-                                                <XCircle className="w-5 h-5 text-learning" />
-                                                <span className="font-bold text-learning">Learning Detected:</span>
-                                            </div>
-                                            <p className="text-muted-foreground italic pl-7">{exp.reason}</p>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="flex flex-col justify-between border-l border-white/5 pl-8">
-                                    <div className="space-y-4">
-                                        <div className="space-y-1">
-                                            <span className="text-[10px] uppercase font-bold text-muted-foreground">Experiment Status</span>
-                                            <div className="flex items-center gap-2 font-bold uppercase">
-                                                {exp.status === "Active" ? <Timer className="w-4 h-4 text-primary animate-pulse" /> :
-                                                    exp.status === "Completed" ? <CheckCircle2 className="w-4 h-4 text-verifying" /> :
-                                                        <Play className="w-4 h-4 text-muted-foreground" />}
-                                                {exp.status}
-                                            </div>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <span className="text-[10px] uppercase font-bold text-muted-foreground">Started On</span>
-                                            <div className="font-mono text-sm">{exp.started}</div>
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-6 flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all group-hover:border-primary/30">
-                                        <span className="font-bold">View Experiment</span>
-                                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </Link>
-                ))}
-
-                <motion.button
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    className="w-full py-8 border-2 border-dashed border-white/10 rounded-3xl text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all flex flex-col items-center gap-2 group"
-                >
-                    <PlusCircle className="w-8 h-8 group-hover:text-primary transition-colors" />
-                    <span className="font-bold uppercase tracking-widest text-xs">Initialize New Experiment</span>
-                </motion.button>
+                                </td>
+                                <td className="px-6 py-4 text-sm text-muted-foreground">{exp.date}</td>
+                                <td className="px-6 py-4 text-right">
+                                    <button className="p-2 hover:bg-white/10 rounded-lg text-muted-foreground hover:text-white transition-colors">
+                                        <ExternalLink className="w-4 h-4" />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

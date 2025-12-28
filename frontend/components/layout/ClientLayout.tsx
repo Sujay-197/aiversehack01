@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { AuthProvider } from "@/context/AuthContext";
+import { Guidebot } from "@/components/layout/Guidebot";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -15,6 +16,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
                 <div className={!isAuthPage ? "max-w-7xl mx-auto" : "h-full"}>
                     {children}
                 </div>
+                {!isAuthPage && <Guidebot />}
 
                 {/* Subtle background glow - Only show on dashboard/inner pages */}
                 {!isAuthPage && (

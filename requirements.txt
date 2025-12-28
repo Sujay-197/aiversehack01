@@ -9,3 +9,5 @@ PyPDF2
 google-genai
 PyGithub
 python-dotenv
+sqlalchemy
+psycopg2-binary
