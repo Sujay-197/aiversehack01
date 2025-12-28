@@ -6,6 +6,8 @@ import { useState } from "react";
 import { MessageSquare, X, Send, Bot } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { api } from "@/lib/api";
+
 export function Guidebot() {
     const { data: session } = useAuth();
     const user = session?.user;
@@ -14,20 +16,32 @@ export function Guidebot() {
         { role: 'bot', text: "I've analyzed your Passport. Try asking: 'Is my Python strong enough for Series A startups?'" }
     ]);
     const [input, setInput] = useState("");
+    const [isTyping, setIsTyping] = useState(false);
 
     if (!user) return null;
 
-    const handleSend = () => {
-        if (!input.trim()) return;
-        setMessages(prev => [...prev, { role: 'user', text: input }]);
-        // Mock response for now
-        setTimeout(() => {
-            setMessages(prev => [...prev, {
-                role: 'bot',
-                text: `Based on your Passport (Python Confidence: 0.72), you are strong enough technically. However, we have 0 evidence of System Design skills in your GitHub. I recommend running an experiment to build a microservice.`
-            }]);
-        }, 1000);
+    const handleSend = async () => {
+        if (!input.trim() || isTyping) return;
+
+        const userMsg = input;
+        setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
         setInput("");
+        setIsTyping(true);
+
+        try {
+            const res = await api.post("/api/guidebot/chat", { message: userMsg });
+            if (res.ok) {
+                const data = await res.json();
+                setMessages(prev => [...prev, { role: 'bot', text: data.reply }]);
+            } else {
+                setMessages(prev => [...prev, { role: 'bot', text: "Protocol link interrupted. Please try again." }]);
+            }
+        } catch (e) {
+            console.error(e);
+            setMessages(prev => [...prev, { role: 'bot', text: "Connection to Brain lost." }]);
+        } finally {
+            setIsTyping(false);
+        }
     };
 
     return (
@@ -63,6 +77,15 @@ export function Guidebot() {
                                     </div>
                                 </div>
                             ))}
+                            {isTyping && (
+                                <div className="flex justify-start">
+                                    <div className="bg-white/10 p-3 rounded-2xl rounded-bl-sm flex gap-1 items-center">
+                                        <div className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" />
+                                        <div className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.2s]" />
+                                        <div className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.4s]" />
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Input */}

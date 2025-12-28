@@ -9,8 +9,8 @@ import {
     ArrowRight
 } from "lucide-react";
 import { cn, formatConfidence } from "@/lib/utils";
-import { useEffect } from "react";
-import { useAuth } from "@/context/AuthContext"; // Actually useSession
+import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
 import { StatCard } from "@/components/ui/StatCard";
@@ -28,19 +28,38 @@ const recentExperiments = [
     { id: 3, title: "DevRel Exploration", hypothesis: "Communication skills test", status: "Proposed", confidence: 0.20 },
 ];
 
+import { api } from "@/lib/api";
+
 export default function Dashboard() {
-    const { data: session, status } = useAuth(); // usage of useSession
+    const { data: session, status } = useAuth();
     const router = useRouter();
     const loading = status === "loading";
     const user = session?.user;
+
+    const [realStats, setRealStats] = useState(stats);
+    const [realExps, setRealExps] = useState(recentExperiments);
+    const [pageLoading, setPageLoading] = useState(true);
 
     useEffect(() => {
         if (status === "unauthenticated") {
             router.push("/");
         }
-    }, [status, router]);
+        if (session) {
+            Promise.all([
+                api.get("/api/experiments").then(res => res.json()),
+                api.get("/api/hypotheses").then(res => res.json())
+            ]).then(([exps, hyps]) => {
+                setRealExps(exps.slice(0, 3));
+                // Update stats based on real data
+                const updatedStats = [...stats];
+                updatedStats[0].value = exps.length.toString();
+                updatedStats[3].value = hyps.length.toString();
+                setRealStats(updatedStats);
+            }).finally(() => setPageLoading(false));
+        }
+    }, [status, router, session]);
 
-    if (loading || !user) return (
+    if (loading || pageLoading || !user) return (
         <div className="flex h-[50vh] items-center justify-center text-muted-foreground">
             Loading Lab Data...
         </div>
@@ -63,7 +82,7 @@ export default function Dashboard() {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat, index) => (
+                {realStats.map((stat, index) => (
                     <StatCard key={stat.name} {...stat} index={index} />
                 ))}
             </div>
@@ -87,25 +106,25 @@ export default function Dashboard() {
                     </div>
 
                     <div className="space-y-4">
-                        {recentExperiments.map((exp) => (
+                        {realExps.map((exp: any) => (
                             <div key={exp.id} className="p-5 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between hover:bg-white/10 transition-colors">
                                 <div className="space-y-1">
-                                    <h4 className="font-semibold text-lg">{exp.title}</h4>
-                                    <p className="text-sm text-muted-foreground italic">&ldquo;{exp.hypothesis}&rdquo;</p>
+                                    <h4 className="font-semibold text-lg">{exp.role || exp.title}</h4>
+                                    <p className="text-sm text-muted-foreground italic">&ldquo;{exp.hypothesis || exp.company}&rdquo;</p>
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <div className="text-right">
                                         <div className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Confidence</div>
                                         <div className={cn(
                                             "font-mono font-bold text-lg",
-                                            exp.confidence > 0.5 ? "text-verifying" : "text-learning"
+                                            (exp.confidence ?? 0.5) > 0.5 ? "text-verifying" : "text-learning"
                                         )}>
-                                            {formatConfidence(exp.confidence)}
+                                            {formatConfidence(exp.confidence ?? 0.5)}
                                         </div>
                                     </div>
                                     <div className={cn(
                                         "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-tight",
-                                        exp.status === "Active" ? "bg-blue-500/20 text-blue-400 border border-blue-500/20" :
+                                        exp.status === "Active" || exp.status === "applying" ? "bg-blue-500/20 text-blue-400 border border-blue-500/20" :
                                             exp.status === "Completed" ? "bg-green-500/20 text-green-400 border border-green-500/20" :
                                                 "bg-muted text-muted-foreground border border-muted"
                                     )}>

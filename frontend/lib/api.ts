@@ -4,25 +4,23 @@ import { getSession } from "next-auth/react";
 
 export async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
     const session = await getSession();
-    const token = session?.user?.email; // For MVP, identifying by email
+    const token = session?.user?.email;
 
-    const headers = {
+    const headers: Record<string, string> = {
         "Content-Type": "application/json",
-        ...(token && { "X-User-Email": token }), // Backend will trust this for now
-        ...options.headers,
+        ...(token && { "X-User-Email": token }),
+        ...(options.headers as Record<string, string>),
     };
 
-    const response = await fetch(`${API_URL}${endpoint}`, {
+    // If Content-Type is explicitly set to empty string, remove it (for FormData)
+    if (headers["Content-Type"] === "") {
+        delete headers["Content-Type"];
+    }
+
+    return fetch(`${API_URL}${endpoint}`, {
         ...options,
         headers,
     });
-
-    if (response.status === 401) {
-        // Handle unauthorized
-        // window.location.href = "/login"; // Optional: redirect
-    }
-
-    return response;
 }
 
 export const api = {
@@ -31,5 +29,14 @@ export const api = {
         fetchWithAuth(endpoint, {
             method: "POST",
             body: JSON.stringify(body),
+        }),
+    postFormData: (endpoint: string, body: FormData) =>
+        fetchWithAuth(endpoint, {
+            method: "POST",
+            body: body,
+            headers: {
+                // Remove default Content-Type to let browser set it with boundary
+                "Content-Type": "",
+            },
         }),
 };

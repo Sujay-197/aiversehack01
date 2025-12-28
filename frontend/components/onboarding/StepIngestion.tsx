@@ -5,6 +5,7 @@ import { useOnboardingStore } from "@/lib/store/onboarding";
 import { Upload, Github, FileText, Linkedin } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { api } from "@/lib/api";
 
 export function StepIngestion() {
     const {
@@ -30,10 +31,9 @@ export function StepIngestion() {
         setStep('clarification'); // Move to next step immediately for UX (optimistic)
 
         try {
-            // In real app, call API here. 
-            // For now we just move next.
+            await api.postFormData("/api/onboarding/ingest", formData);
         } catch (e) {
-            console.error(e);
+            console.error("Ingestion failed:", e);
         }
     };
 

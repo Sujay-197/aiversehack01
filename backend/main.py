@@ -31,12 +31,13 @@ app.add_middleware(
 
 # Include Routers
 app.include_router(auth.router)
-from backend.routers import onboarding, passport, hypotheses, experiments, insights
+from backend.routers import onboarding, passport, hypotheses, experiments, insights, guidebot
 app.include_router(onboarding.router)
 app.include_router(passport.router)
 app.include_router(hypotheses.router)
 app.include_router(experiments.router)
 app.include_router(insights.router)
+app.include_router(guidebot.router)
 
 @app.get("/")
 def read_root():
