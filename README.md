@@ -147,4 +147,4 @@ graph TD
 ---
 
 ## 🤝 Contributors
-Built for **Anokha 2026 AI Verse Hackathon** by a team (PS: we call ourselves Manhattan Project coz) exploring Agentic AI beyond chatbots.
+Built for **Anokha 2026 AI Verse Hackathon** by a team (PS: idk y we call ourselves Manhattan Project, but here we are) exploring Agentic AI beyond chatbots.
