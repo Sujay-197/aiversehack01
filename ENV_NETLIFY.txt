@@ -1,0 +1,5 @@
+# Frontend Environment Variables (Netlify)
+# Copy these to Netlify dashboard: Site settings → Environment variables
+NEXT_PUBLIC_API_URL=https://your-backend.onrender.com
+NEXTAUTH_URL=https://your-site.netlify.app
+NEXTAUTH_SECRET=generate_random_secret_here
