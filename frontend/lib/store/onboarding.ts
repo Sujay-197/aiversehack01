@@ -1,7 +1,8 @@
 
+
 import { create } from 'zustand';
 
-type OnboardingStep = 'ingestion' | 'clarification' | 'reveal';
+export type OnboardingStep = 'ingestion' | 'clarification' | 'reveal';
 
 interface OnboardingState {
     step: OnboardingStep;
