@@ -1,6 +1,6 @@
 "use client";
 
-import { useOnboardingStore } from "@/lib/store/onboarding";
+import { useOnboardingStore, type OnboardingStep } from "@/lib/store/onboarding";
 import { StepIngestion } from "@/components/onboarding/StepIngestion";
 import { StepClarification } from "@/components/onboarding/StepClarification";
 import { StepReveal } from "@/components/onboarding/StepReveal";
@@ -31,7 +31,7 @@ export default function OnboardingPage() {
                         <div className="flex items-center justify-center gap-2 mt-4">
                             <div className={`h-1 rounded-full transition-all duration-500 ${step === 'ingestion' ? 'w-8 bg-primary' : 'w-2 bg-white/20'}`} />
                             <div className={`h-1 rounded-full transition-all duration-500 ${step === 'clarification' ? 'w-8 bg-primary' : 'w-2 bg-white/20'}`} />
-                            <div className={`h-1 rounded-full transition-all duration-500 ${step === 'reveal' ? 'w-8 bg-primary' : 'w-2 bg-white/20'}`} />
+                            <div className={`h-1 rounded-full transition-all duration-500 ${(step as OnboardingStep) === 'reveal' ? 'w-8 bg-primary' : 'w-2 bg-white/20'}`} />
                         </div>
                     </div>
                 )}
