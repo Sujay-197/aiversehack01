@@ -5,10 +5,21 @@ from backend import models_orm
 from backend.database import engine
 from backend.routers import auth
 
-# Create Tables (for local sqlite)
-models_orm.Base.metadata.create_all(bind=engine)
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="Aiversehack01 API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Create Tables on startup (only if not already there)
+    # This prevents the app from hanging during import if DB is slow
+    try:
+        print("Connecting to database and creating tables...")
+        models_orm.Base.metadata.create_all(bind=engine)
+        print("Database tables verified.")
+    except Exception as e:
+        print(f"Database connection failed: {e}")
+    yield
+
+app = FastAPI(title="Aiversehack01 API", lifespan=lifespan)
 
 # CORS Setup
 origins = [
