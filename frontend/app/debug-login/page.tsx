@@ -11,7 +11,7 @@ export default function DebugLoginPage() {
     const handleDebugLogin = async () => {
         setLoading(true);
         await signIn("credentials", {
-            username: email,
+            email: email,
             callbackUrl: "/dashboard"
         });
         setLoading(false);
