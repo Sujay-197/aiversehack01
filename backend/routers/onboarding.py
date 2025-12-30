@@ -10,6 +10,27 @@ import json
 
 router = APIRouter(prefix="/api/onboarding", tags=["onboarding"])
 
+@router.get("/status")
+async def check_status(
+    user: models_orm.User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # Check if user has any evidence (Resume or GitHub)
+    has_resume = db.query(models_orm.Evidence).filter(
+        models_orm.Evidence.user_id == user.id,
+        models_orm.Evidence.type == 'resume'
+    ).first() is not None
+    
+    has_github = db.query(models_orm.Evidence).filter(
+        models_orm.Evidence.user_id == user.id,
+        models_orm.Evidence.type == 'github_repo'
+    ).first() is not None
+
+    return {
+        "is_onboarded": has_resume or has_github,
+        "details": {"resume": has_resume, "github": has_github}
+    }
+
 @router.post("/ingest")
 async def ingest_evidence(
     file: Optional[UploadFile] = File(None),

@@ -47,6 +47,14 @@ export default function Dashboard() {
 
     const fetchData = async () => {
         try {
+            // Check Onboarding Status First
+            const onboardingStatus = await api.get("/api/onboarding/status").then(res => res.json());
+            if (!onboardingStatus.is_onboarded) {
+                toast.info("Incomplete Profile detected. Redirecting to Onboarding...");
+                router.push("/onboarding");
+                return;
+            }
+
             const [exps, hyps] = await Promise.all([
                 api.get("/api/experiments").then(res => res.json()),
                 api.get("/api/hypotheses").then(res => res.json())

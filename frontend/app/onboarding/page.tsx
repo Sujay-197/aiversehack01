@@ -6,9 +6,24 @@ import { StepClarification } from "@/components/onboarding/StepClarification";
 import { StepReveal } from "@/components/onboarding/StepReveal";
 import { ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function OnboardingPage() {
     const { step } = useOnboardingStore();
+    const { status } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (status === "unauthenticated") {
+            router.push("/");
+        }
+    }, [status, router]);
+
+    if (status === "loading" || status === "unauthenticated") {
+        return null; // Or a spinner
+    }
 
     return (
         <div className="min-h-[90vh] flex items-center justify-center py-12">
