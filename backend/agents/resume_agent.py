@@ -47,8 +47,8 @@ class ResumeAgent:
 
     def analyze(self, pdf_path: str, user_id=None) -> ResumeEvidence:
         """
-        Extracts text from PDF and structured data using Gemini.
-        Returns a populated ResumeEvidence object.
+        Extracts text from PDF and produces structured ResumeEvidence as planned.
+        Returns a ResumeEvidence object with all extracted fields, suitable for downstream agents.
         """
         try:
             resume_text = self.extract_text(pdf_path)
@@ -114,7 +114,8 @@ class ResumeAgent:
             # Convert skills dicts to Skill objects
             skill_objs = [Skill(**s) for s in data.get("skills", [])]
             
-            evidence = ResumeEvidence(
+            # Return ResumeEvidence as planned
+            return ResumeEvidence(
                 user_id=user_id if user_id else "00000000-0000-0000-0000-000000000000",
                 full_name=data.get("full_name", "Unknown"),
                 email=data.get("email"),
@@ -123,7 +124,6 @@ class ResumeAgent:
                 work_experience=data.get("work_experience", []),
                 education=data.get("education", [])
             )
-            return evidence
 
         except Exception as e:
             logger.error(f"Error analyzing resume: {e}")

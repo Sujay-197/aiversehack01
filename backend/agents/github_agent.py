@@ -27,39 +27,32 @@ class GitHubAgent:
 
     def analyze_user(self, username: str, user_id=None) -> GitHubEvidence:
         """
-        Fetches public profile and repositories for a GitHub user.
+        Fetches public profile and analyzes up to top 3 public repositories for a GitHub user.
+        Returns GitHubEvidence compatible with other agents.
         """
         logger.info(f"Analyzing GitHub user: {username}")
         try:
             user = self.github.get_user(username)
-            
             # Basic Bio
             bio = user.bio
             followers = user.followers
             public_repos_count = user.public_repos
             logger.debug(f"Fetched basic profile for {username}. Repos: {public_repos_count}")
-            
-            # Fetch Repos (limit to top 15 by updated to sort by stars later)
+
+            # Fetch and analyze up to top 3 public, non-forked repos by stars
             repos_data = []
-            
-            # We fetch 20 most recently updated repos to analyze
             all_repos = user.get_repos(sort="updated")
-            count = 0
             temp_repos = []
-            
             for repo in all_repos:
-                if count >= 20: break
-                if repo.fork: continue 
-                
+                if repo.fork:
+                    continue
                 temp_repos.append(repo)
-                count += 1
-                
-            # Sort by stars descending to pick the absolute best showcase
+                if len(temp_repos) >= 10:
+                    break
+            # Sort by stars descending
             temp_repos.sort(key=lambda r: r.stargazers_count, reverse=True)
-            
-            # Take top 10
-            top_repos = temp_repos[:10]
-            
+            # Take top 3
+            top_repos = temp_repos[:3]
             for repo in top_repos:
                 repos_data.append(GitHubRepo(
                     name=repo.name,
@@ -69,8 +62,11 @@ class GitHubAgent:
                     stars=repo.stargazers_count,
                     updated_at=repo.updated_at.isoformat() if repo.updated_at else None
                 ))
-            
+
             logger.info(f"Found {len(repos_data)} top repositories for {username}.")
+
+            # Optionally, add further analysis here (e.g., aggregate languages, detect project types, etc.)
+            # This is where you would add logic to output according to other agents' needs.
 
             evidence = GitHubEvidence(
                 user_id=user_id if user_id else "00000000-0000-0000-0000-000000000000",
